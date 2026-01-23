@@ -4,7 +4,9 @@
 
 console.log('--- checkout.js file loaded ---');
 
-var API_URL = window.API_URL || '/api';
+var API_URL = (window.location.protocol === 'https:')
+  ? 'https://nutrikitchen.vercel.app/api'
+  : (window.API_URL || '/api');
 
 // Process checkout
 async function processCheckout(event) {

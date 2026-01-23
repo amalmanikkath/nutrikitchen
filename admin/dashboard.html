@@ -302,7 +302,9 @@
 
     // Fetch and display orders and stats
     const token = localStorage.getItem('nutriToken');
-    const API_URL = (window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1')) ? 'http://localhost:5000/api' : '/api';
+      const API_URL = (window.location.protocol === 'https:')
+        ? 'https://nutrikitchen.vercel.app/api'
+        : ((window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1')) ? 'http://localhost:5000/api' : '/api');
 
     async function loadDashboardStatsAndOrders() {
       if (!token) {

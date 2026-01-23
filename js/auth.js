@@ -2,7 +2,9 @@
 // Nutri Kitchen - Auth Functionality
 // ==========================================
 
-var API_URL = window.API_URL || '/api';
+var API_URL = (window.location.protocol === 'https:')
+  ? 'https://nutrikitchen.vercel.app/api'
+  : (window.API_URL || '/api');
 
 class Auth {
   constructor() {

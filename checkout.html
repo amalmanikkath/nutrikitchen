@@ -486,7 +486,9 @@
     // RAZORPAY PAYMENT INTEGRATION
     // ========================================
     // Use existing API_URL or define a local one
-    const CHECKOUT_API_URL = window.API_URL || 'http://localhost:5000/api';
+      const CHECKOUT_API_URL = (window.location.protocol === 'https:')
+        ? 'https://nutrikitchen.vercel.app/api'
+        : (window.API_URL || 'http://localhost:5000/api');
     
     async function processCheckout(event) {
       event.preventDefault();

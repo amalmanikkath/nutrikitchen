@@ -2,7 +2,9 @@
 // Nutri Kitchen - Shopping Cart Functionality
 // ==========================================
 
-var API_URL = window.API_URL || '/api';
+var API_URL = (window.location.protocol === 'https:')
+  ? 'https://nutrikitchen.vercel.app/api'
+  : (window.API_URL || '/api');
 
 class ShoppingCart {
   constructor() {
