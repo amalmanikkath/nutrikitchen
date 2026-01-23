@@ -32,7 +32,7 @@ const authenticate = (req, res, next) => {
   
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.userId = decoded.userId;
+    req.userId = String(decoded.userId);
     next();
   } catch (error) {
     res.status(401).json({ message: 'Invalid token' });
@@ -70,7 +70,7 @@ router.post('/create', authenticate, async (req, res) => {
     try {
       const dbOrder = await prisma.order.create({
         data: {
-          userId: req.userId,
+          userId: String(req.userId),
           razorpayOrderId: rpOrder.id,
           totalAmount: amount,
           status: 'PENDING',

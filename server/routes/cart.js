@@ -12,7 +12,7 @@ const authenticate = (req, res, next) => {
   
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.userId = decoded.userId;
+    req.userId = String(decoded.userId);
     next();
   } catch (error) {
     res.status(401).json({ message: 'Invalid token' });
@@ -26,14 +26,14 @@ router.post('/sync', authenticate, async (req, res) => {
     
     // Delete existing
     await prisma.cartItem.deleteMany({
-      where: { userId: req.userId }
+      where: { userId: String(req.userId) }
     });
     
     // Create new
     if (items && items.length > 0) {
       await prisma.cartItem.createMany({
         data: items.map(item => ({
-          userId: req.userId,
+          userId: String(req.userId),
           productId: String(item.productId),
           quantity: item.quantity
         }))
@@ -51,7 +51,7 @@ router.post('/sync', authenticate, async (req, res) => {
 router.get('/', authenticate, async (req, res) => {
   try {
     const cartItems = await prisma.cartItem.findMany({
-      where: { userId: req.userId }
+      where: { userId: String(req.userId) }
     });
     res.json(cartItems);
   } catch (error) {
