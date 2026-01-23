@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login | Nutri Kitchen</title>
+  <meta name="robots" content="noindex, nofollow">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  
+  <style>
+    .login-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--primary-green), var(--primary-dark));
+      padding: var(--space-xl);
+    }
+    
+    .login-box {
+      background: white;
+      padding: var(--space-3xl);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-xl);
+      max-width: 450px;
+      width: 100%;
+    }
+    
+    .login-header {
+      text-align: center;
+      margin-bottom: var(--space-2xl);
+    }
+    
+    .login-header img {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto var(--space-md);
+      border-radius: var(--radius-md);
+    }
+    
+    .form-group {
+      margin-bottom: var(--space-lg);
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: var(--space-sm);
+      font-weight: 600;
+      color: var(--dark-gray);
+    }
+    
+    .form-input {
+      width: 100%;
+      padding: var(--space-md);
+      border: 2px solid var(--light-gray);
+      border-radius: var(--radius-md);
+      font-family: var(--font-primary);
+      font-size: var(--text-base);
+      transition: all var(--transition-base);
+    }
+    
+    .form-input:focus {
+      outline: none;
+      border-color: var(--primary-green);
+    }
+  </style>
+</head>
+<body>
+  
+  <div class="login-container">
+    <div class="login-box animate-scale-in">
+      <div class="login-header">
+        <img src="../images/nutrikitchen.jpg" alt="Nutri Kitchen Admin">
+        <h1>Admin Login</h1>
+        <p style="color: var(--medium-gray);">Enter your credentials to access the admin dashboard</p>
+      </div>
+      
+      <form id="login-form" onsubmit="return handleLogin(event)">
+        <div class="form-group">
+          <label for="username" class="form-label">Username</label>
+          <input type="text" id="username" name="username" class="form-input" required autocomplete="username">
+        </div>
+        
+        <div class="form-group">
+          <label for="password" class="form-label">Password</label>
+          <input type="password" id="password" name="password" class="form-input" required autocomplete="current-password">
+        </div>
+        
+        <button type="submit" class="btn btn-primary" style="width: 100%;">
+          Login
+        </button>
+      </form>
+      
+      <div style="margin-top: var(--space-xl); text-align: center; padding-top: var(--space-xl); border-top: 1px solid var(--light-gray);">
+        <p style="font-size: var(--text-sm); color: var(--medium-gray);">
+          <strong>Demo Credentials:</strong><br>
+          Username: admin<br>
+          Password: nutrikitchen123
+        </p>
+        <p style="margin-top: var(--space-md); font-size: var(--text-sm);">
+          <a href="../index.html" style="color: var(--primary-green);">← Back to Website</a>
+        </p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Scripts -->
+  <script src="../js/data.js"></script>
+  <script src="../js/admin.js"></script>
+  
+</body>
+</html>

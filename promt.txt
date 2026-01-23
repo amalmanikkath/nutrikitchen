@@ -1,0 +1,14 @@
+please create a prompt to build website for a brand called "Nutri Kitchen"
+which includes shopping cart, payment gateway product page,
+this product is focused on Healthy foods products, which created as a base of Millet and other grains,
+
+the website should be compatible with all devices
+
+should have parallax scrolling features, lazy loading menu animations,
+
+admin section should have capabilities to add products details like product name, product price , product description, add to cart button
+
+Please create a professional looking carousel with 5 slides using the product  available in the images folder , add title and description according to the products,
+
+Please use the logo availble in the images folder named "nutrikitchen"
+website should be matching with the logo color

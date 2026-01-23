@@ -1,0 +1,65 @@
+<svg width="1920" height="1080" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="stalkGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#2b6555;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4c8c7a;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="leafGradient" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#1e4d40;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#5ea691;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="grainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#d4af37;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#e6c761;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#c5a028;stop-opacity:1" />
+    </linearGradient>
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+  
+  <style>
+    .stalk { fill: none; stroke: url(#stalkGradient); stroke-width: 12; stroke-linecap: round; }
+    .leaf { fill: url(#leafGradient); opacity: 0.85; }
+    .head { fill: url(#grainGradient); }
+    .head-detail { fill: #fff; opacity: 0.2; }
+  </style>
+
+  <!-- Large Background Group - Left Side -->
+  <g transform="translate(-100, 100) scale(1.4)">
+    <!-- Stalk 1 (Far Left) -->
+    <path class="stalk" d="M100,1000 Q120,700 80,400 T100,100" />
+    <path class="leaf" d="M90,700 Q-50,600 -100,650 Q-50,680 90,720 Z" />
+    <path class="leaf" d="M90,400 Q200,350 250,400 Q200,430 90,450 Z" />
+    <rect class="head" x="80" y="-20" width="40" height="220" rx="20" ry="20" transform="rotate(-5 100 90)" />
+    
+    <!-- Stalk 2 -->
+    <path class="stalk" d="M300,1050 Q280,750 320,450 T300,150" />
+    <path class="leaf" d="M310,600 Q450,550 500,600 Q450,630 310,650 Z" />
+    <path class="leaf" d="M310,350 Q150,300 100,350 Q150,380 310,400 Z" />
+    <rect class="head" x="280" y="30" width="45" height="240" rx="22" ry="22" transform="rotate(5 300 150)" />
+  </g>
+
+  <!-- Large Background Group - Right Side -->
+  <g transform="translate(1300, 50) scale(1.5)">
+    <!-- Stalk 3 -->
+    <path class="stalk" d="M200,1000 Q180,700 220,400 T200,100" />
+    <path class="leaf" d="M210,650 Q350,600 400,650 Q350,680 210,700 Z" />
+    <path class="leaf" d="M210,350 Q50,300 0,350 Q50,380 210,400 Z" />
+    <rect class="head" x="180" y="-20" width="45" height="250" rx="22" ry="22" transform="rotate(-3 200 100)" />
+    
+    <!-- Stalk 4 (Far Right) -->
+    <path class="stalk" d="M450,1050 Q480,750 420,450 T450,150" />
+    <path class="leaf" d="M440,600 Q300,550 250,600 Q300,630 440,650 Z" />
+    <rect class="head" x="430" y="30" width="40" height="200" rx="20" ry="20" transform="rotate(8 450 130)" />
+  </g>
+  
+  <!-- Overlay Stalks (Foreground - Lower) -->
+  <g transform="translate(500, 400) scale(1.1)" opacity="0.6">
+      <path class="stalk" d="M100,1000 Q110,800 90,600" />
+      <path class="leaf" d="M100,700 Q200,650 240,680 Q200,720 100,720 Z" />
+      <rect class="head" x="75" y="480" width="30" height="150" rx="15" ry="15" transform="rotate(-5 90 550)" />
+  </g>
+
+</svg>

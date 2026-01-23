@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Profile | Nutri Kitchen</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    .profile-container {
+      max-width: 900px;
+      margin: var(--space-3xl) auto;
+      padding: 0 var(--space-xl);
+    }
+    .profile-header {
+      margin-bottom: var(--space-3xl);
+      border-bottom: 1px solid var(--light-gray);
+      padding-bottom: var(--space-xl);
+    }
+    .order-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      padding: var(--space-xl);
+      margin-bottom: var(--space-lg);
+    }
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: var(--space-md);
+      border-bottom: 1px solid var(--light-gray);
+      padding-bottom: var(--space-sm);
+    }
+    .order-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: var(--space-xs);
+    }
+    .status-badge {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: var(--text-xs);
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .status-paid { background: #e8f5e9; color: #2e7d32; }
+    .status-pending { background: #fff3e0; color: #ef6c00; }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <img src="images/nutrikitchen.jpg" alt="Logo">
+      </a>
+      <ul class="nav-menu">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="products.html" class="nav-link">Products</a></li>
+        <li><a href="cart.html" class="nav-link">Cart</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="profile-container">
+    <div class="profile-header">
+      <h1 id="user-name">Your Profile</h1>
+      <p id="user-email"></p>
+    </div>
+
+    <section>
+      <h2 style="margin-bottom: var(--space-xl);">Order History</h2>
+      <div id="orders-list">
+        <p>Loading your orders...</p>
+      </div>
+    </section>
+  </div>
+
+  <script src="js/auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (!auth.isLoggedIn()) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      document.getElementById('user-name').textContent = `Hello, ${auth.user.name}`;
+      document.getElementById('user-email').textContent = auth.user.email;
+
+      try {
+        const response = await fetch('/api/orders/past-orders', {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('nutriToken')}`
+          }
+        });
+        const orders = await response.json();
+        
+        const ordersList = document.getElementById('orders-list');
+        if (orders.length === 0) {
+          ordersList.innerHTML = '<p>You haven\'t placed any orders yet.</p>';
+        } else {
+          ordersList.innerHTML = orders.map(order => `
+            <div class="order-card">
+              <div class="order-header">
+                <div>
+                  <strong>Order #${order.razorpayOrderId}</strong>
+                  <div style="font-size: var(--text-xs); color: var(--medium-gray);">${new Date(order.createdAt).toLocaleDateString()}</div>
+                </div>
+                <span class="status-badge status-${order.status.toLowerCase()}">${order.status}</span>
+              </div>
+              <div class="order-items">
+                ${order.orderItems.map(item => `
+                  <div class="order-item">
+                    <span>${item.productName} x ${item.quantity}</span>
+                    <span>₹${item.price * item.quantity}</span>
+                  </div>
+                `).join('')}
+              </div>
+              <div style="margin-top: var(--space-md); text-align: right; border-top: 1px solid var(--light-gray); padding-top: var(--space-sm);">
+                <strong>Total: ₹${order.totalAmount}</strong>
+              </div>
+            </div>
+          `).join('');
+        }
+      } catch (error) {
+        console.error('Error fetching orders:', error);
+        document.getElementById('orders-list').innerHTML = '<p>Error loading orders. Please try again later.</p>';
+      }
+    });
+  </script>
+</body>
+</html>

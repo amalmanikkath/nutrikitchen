@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Nutri Kitchen</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    .auth-container {
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-xl);
+    }
+    .auth-box {
+      background: white;
+      padding: var(--space-3xl);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-xl);
+      max-width: 450px;
+      width: 100%;
+    }
+    .auth-header {
+      text-align: center;
+      margin-bottom: var(--space-2xl);
+    }
+    .auth-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: var(--text-2xl);
+      color: var(--primary-dark);
+      margin-bottom: var(--space-xs);
+    }
+    .form-group {
+      margin-bottom: var(--space-lg);
+    }
+    .form-label {
+      display: block;
+      margin-bottom: var(--space-sm);
+      font-weight: 600;
+      font-size: var(--text-sm);
+    }
+    .form-input {
+      width: 100%;
+      padding: var(--space-md);
+      border: 2px solid var(--light-gray);
+      border-radius: var(--radius-md);
+      transition: all 0.3s ease;
+    }
+    .form-input:focus {
+      border-color: var(--primary-green);
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.1);
+    }
+    .auth-footer {
+      text-align: center;
+      margin-top: var(--space-xl);
+      font-size: var(--text-sm);
+    }
+    .auth-footer a {
+      color: var(--primary-green);
+      font-weight: 600;
+    }
+    @media (max-width: 768px) {
+      .form-input {
+        padding: 10px 12px !important;
+      }
+      .auth-box {
+        padding: var(--space-xl);
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <img src="images/nutrikitchen.jpg" alt="Logo">
+      </a>
+      <ul class="nav-menu">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="products.html" class="nav-link">Products</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="auth-container">
+    <div class="auth-box animate-scale-in">
+      <div class="auth-header">
+        <h1 class="auth-title">Welcome Back</h1>
+        <p>Login to your account to manage orders</p>
+      </div>
+      <form id="login-form">
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" id="email" class="form-input" placeholder="name@example.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" id="password" class="form-input" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+      </form>
+      <div class="auth-footer">
+        <p>Don't have an account? <a href="signup.html" id="signup-link">Create one</a></p>
+      </div>
+      <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirect = urlParams.get('redirect');
+        if (redirect) {
+          document.getElementById('signup-link').href = `signup.html?redirect=${encodeURIComponent(redirect)}`;
+        }
+      </script>
+    </div>
+  </div>
+
+  <script src="js/auth.js"></script>
+</body>
+</html>

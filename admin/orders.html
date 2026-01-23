@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orders & Users | Admin Dashboard</title>
+  <meta name="robots" content="noindex, nofollow">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/animations.css">
+  
+  <style>
+    .admin-header {
+      background: linear-gradient(135deg, var(--primary-green), var(--primary-dark));
+      color: white;
+      padding: var(--space-xl);
+      box-shadow: var(--shadow-md);
+    }
+    
+    .admin-header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .admin-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: var(--space-2xl);
+    }
+    
+    .admin-nav {
+      background: white;
+      padding: var(--space-md);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      margin-bottom: var(--space-2xl);
+      display: flex;
+      gap: var(--space-md);
+    }
+    
+    .admin-nav button {
+      padding: var(--space-md) var(--space-xl);
+      border: none;
+      background: var(--off-white);
+      color: var(--dark-gray);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .admin-nav button.active {
+      background: var(--primary-green);
+      color: white;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--space-lg);
+      margin-bottom: var(--space-2xl);
+    }
+    
+    .stat-card {
+      background: white;
+      padding: var(--space-lg);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+    }
+    
+    .stat-value {
+      font-size: var(--text-3xl);
+      font-weight: 800;
+      color: var(--primary-green);
+      margin: var(--space-sm) 0;
+    }
+    
+    .data-table {
+      background: white;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+    }
+    
+    .data-table table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .data-table th {
+      background: var(--primary-green);
+      color: white;
+      padding: var(--space-md);
+      text-align: left;
+      font-weight: 600;
+    }
+    
+    .data-table td {
+      padding: var(--space-md);
+      border-bottom: 1px solid var(--light-gray);
+    }
+    
+    .data-table tr:hover {
+      background: var(--off-white);
+    }
+    
+    .status-badge {
+      padding: 4px 12px;
+      border-radius: var(--radius-md);
+      font-size: var(--text-sm);
+      font-weight: 600;
+    }
+    
+    .status-paid {
+      background: #d4edda;
+      color: #155724;
+    }
+    
+    .status-pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+    
+    .view-btn {
+      padding: 6px 12px;
+      background: var(--primary-green);
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-size: var(--text-sm);
+    }
+    
+    .view-btn:hover {
+      background: var(--primary-dark);
+    }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal.active {
+      display: flex;
+    }
+    
+    .modal-box {
+      position: relative;
+      max-width: 600px;
+      width: 90%;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-content {
+      background: white;
+      padding: var(--space-2xl);
+      border-radius: var(--radius-xl);
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+    }
+
+    /* Custom Scrollbar for Modal content */
+    .modal-content::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .modal-content::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+
+    .modal-content::-webkit-scrollbar-thumb {
+      background: var(--primary-green);
+      border-radius: 10px;
+    }
+
+    .modal-content::-webkit-scrollbar-thumb:hover {
+      background: var(--primary-dark);
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-lg);
+    }
+    
+    .close-btn {
+      position: absolute;
+      top: -15px;
+      right: -15px;
+      background: var(--primary-green);
+      border: 3px solid white;
+      font-size: 28px;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: white;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+      z-index: 1001;
+      line-height: 1;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .close-btn:hover {
+      background: #e9ecef;
+      color: var(--error);
+      transform: rotate(90deg);
+    }
+    
+    .order-items {
+      margin-top: var(--space-lg);
+    }
+    
+    .order-item {
+      padding: var(--space-md);
+      background: var(--off-white);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-sm);
+      display: flex;
+      justify-content: space-between;
+    }
+  </style>
+</head>
+<body>
+  
+  <!-- Admin Header -->
+  <header class="admin-header">
+    <div class="admin-header-content">
+      <div>
+        <h1>Admin Dashboard</h1>
+        <p>Orders & Customer Management</p>
+      </div>
+      <div style="display: flex; gap: var(--space-md);">
+        <a href="dashboard.html" class="btn" style="background: white; color: var(--primary-green); text-decoration: none;">
+          Products
+        </a>
+        <button id="logout-btn" class="btn" style="background: white; color: var(--primary-green);">
+          Logout
+        </button>
+      </div>
+    </div>
+  </header>
+  
+  <!-- Admin Content -->
+  <div class="admin-container">
+    
+    <!-- Navigation -->
+    <div class="admin-nav">
+      <button class="active" data-view="stats">Dashboard</button>
+      <button data-view="orders">All Orders</button>
+      <button data-view="users">All Customers</button>
+    </div>
+    
+    <!-- Stats Section -->
+    <div id="stats-section">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <h3>Total Orders</h3>
+          <div class="stat-value" id="total-orders">0</div>
+          <p style="color: var(--medium-gray);">All time orders</p>
+        </div>
+        
+        <div class="stat-card">
+          <h3>Paid Orders</h3>
+          <div class="stat-value" style="color: var(--success);" id="paid-orders">0</div>
+          <p style="color: var(--medium-gray);">Completed payments</p>
+        </div>
+        
+        <div class="stat-card">
+          <h3>Pending Orders</h3>
+          <div class="stat-value" style="color: #f39c12;" id="pending-orders">0</div>
+          <p style="color: var(--medium-gray);">Awaiting payment</p>
+        </div>
+        
+        <div class="stat-card">
+          <h3>Total Customers</h3>
+          <div class="stat-value" id="total-users">0</div>
+          <p style="color: var(--medium-gray);">Registered users</p>
+        </div>
+        
+        <div class="stat-card">
+          <h3>Total Revenue</h3>
+          <div class="stat-value" id="total-revenue">₹0</div>
+          <p style="color: var(--medium-gray);">From paid orders</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Orders Section -->
+    <div id="orders-section" style="display: none;">
+      <div class="data-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Customer</th>
+              <th>Email</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="orders-table-body">
+            <!-- Orders will be rendered here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <!-- Users Section -->
+    <div id="users-section" style="display: none;">
+      <div class="data-table">
+        <table>
+          <thead>
+            <tr>
+              <th>User ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Total Orders</th>
+              <th>Paid Orders</th>
+              <th>Total Spent</th>
+              <th>Joined Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="users-table-body">
+            <!-- Users will be rendered here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+  </div>
+  
+  <!-- Order Details Modal -->
+  <div id="order-modal" class="modal">
+    <div class="modal-box">
+      <button class="close-btn" onclick="document.getElementById('order-modal').classList.remove('active')">&times;</button>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Order Details</h2>
+        </div>
+        <div id="order-details">
+          <!-- Order details will be rendered here -->
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- User Details Modal -->
+  <div id="user-modal" class="modal">
+    <div class="modal-box">
+      <button class="close-btn" onclick="document.getElementById('user-modal').classList.remove('active')">&times;</button>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Customer Details</h2>
+        </div>
+        <div id="user-details">
+          <!-- User details will be rendered here -->
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    const API_URL = (window.location.origin.includes('localhost') || window.location.origin.includes('127.0.0.1')) ? 'http://localhost:5000/api' : '/api';
+    
+    // Check authentication
+    const token = localStorage.getItem('nutriToken');
+    if (!token) {
+      window.location.href = 'login.html';
+    }
+    
+    // Navigation
+    document.querySelectorAll('.admin-nav button').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.admin-nav button').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        
+        const view = this.dataset.view;
+        document.getElementById('stats-section').style.display = view === 'stats' ? 'block' : 'none';
+        document.getElementById('orders-section').style.display = view === 'orders' ? 'block' : 'none';
+        document.getElementById('users-section').style.display = view === 'users' ? 'block' : 'none';
+        
+        if (view === 'orders') loadOrders();
+        if (view === 'users') loadUsers();
+      });
+    });
+    
+    // Load statistics
+    async function loadStats() {
+      try {
+        const response = await fetch(`${API_URL}/admin/stats`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const stats = await response.json();
+        
+        document.getElementById('total-orders').textContent = stats.totalOrders;
+        document.getElementById('paid-orders').textContent = stats.paidOrders;
+        document.getElementById('pending-orders').textContent = stats.pendingOrders;
+        document.getElementById('total-users').textContent = stats.totalUsers;
+        document.getElementById('total-revenue').textContent = `₹${Math.round(stats.totalRevenue)}`;
+      } catch (error) {
+        console.error('Error loading stats:', error);
+      }
+    }
+    
+    // Load orders
+    async function loadOrders() {
+      try {
+        const response = await fetch(`${API_URL}/admin/orders`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const orders = await response.json();
+        
+        const tbody = document.getElementById('orders-table-body');
+        tbody.innerHTML = orders.map(order => `
+          <tr>
+            <td>#${order.id}</td>
+            <td>${order.user.name}</td>
+            <td>${order.user.email}</td>
+            <td>₹${Math.round(order.totalAmount)}</td>
+            <td><span class="status-badge status-${order.status.toLowerCase()}">${order.status}</span></td>
+            <td>${new Date(order.createdAt).toLocaleDateString()}</td>
+            <td><button class="view-btn" onclick="viewOrder(${order.id})">View</button></td>
+          </tr>
+        `).join('');
+      } catch (error) {
+        console.error('Error loading orders:', error);
+      }
+    }
+    
+    // Load users
+    async function loadUsers() {
+      try {
+        const response = await fetch(`${API_URL}/admin/users`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const users = await response.json();
+        
+        const tbody = document.getElementById('users-table-body');
+        tbody.innerHTML = users.map(user => `
+          <tr>
+            <td>#${user.id}</td>
+            <td>${user.name}</td>
+            <td>${user.email}</td>
+            <td>${user.orderCount}</td>
+            <td>${user.paidOrderCount}</td>
+            <td>₹${Math.round(user.totalSpent)}</td>
+            <td>${new Date(user.createdAt).toLocaleDateString()}</td>
+            <td><button class="view-btn" onclick="viewUser(${user.id})">View</button></td>
+          </tr>
+        `).join('');
+      } catch (error) {
+        console.error('Error loading users:', error);
+      }
+    }
+    
+    // View order details
+    async function viewOrder(orderId) {
+      try {
+        const response = await fetch(`${API_URL}/admin/orders/${orderId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const order = await response.json();
+        
+        const detailsDiv = document.getElementById('order-details');
+        detailsDiv.innerHTML = `
+          <p><strong>Order ID:</strong> #${order.id}</p>
+          <p><strong>Customer:</strong> ${order.user.name} (${order.user.email})</p>
+          <p><strong>Total Amount:</strong> ₹${Math.round(order.totalAmount)}</p>
+          <p><strong>Status:</strong> <span class="status-badge status-${order.status.toLowerCase()}">${order.status}</span></p>
+          <p><strong>Razorpay Order ID:</strong> ${order.razorpayOrderId}</p>
+          ${order.razorpayPaymentId ? `<p><strong>Payment ID:</strong> ${order.razorpayPaymentId}</p>` : ''}
+          <p><strong>Date:</strong> ${new Date(order.createdAt).toLocaleString()}</p>
+          
+          <h3 style="margin-top: var(--space-lg);">Ordered Items</h3>
+          <div class="order-items">
+            ${order.orderItems.map(item => `
+              <div class="order-item">
+                <div>
+                  <div style="font-weight: 600;">${item.productName}</div>
+                  <div style="font-size: var(--text-sm); color: var(--medium-gray);">
+                    Quantity: ${item.quantity} × ₹${item.price}
+                  </div>
+                </div>
+                <div style="font-weight: 700;">₹${item.quantity * item.price}</div>
+              </div>
+            `).join('')}
+          </div>
+
+          <div style="margin-top: var(--space-xl); display: flex; gap: var(--space-md);">
+            <button class="view-btn" style="flex: 1; padding: 12px; font-weight: 600;" onclick="printGSTBill(${order.id})">
+              🖨️ Print GST Bill
+            </button>
+          </div>
+        `;
+
+        // Store active order for printing
+        window.activeOrderForPrint = order;
+        
+        document.getElementById('order-modal').classList.add('active');
+      } catch (error) {
+        console.error('Error loading order details:', error);
+        alert('Error loading order details');
+      }
+    }
+    
+    // View user details
+    async function viewUser(userId) {
+      try {
+        const response = await fetch(`${API_URL}/admin/users/${userId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const user = await response.json();
+        
+        const detailsDiv = document.getElementById('user-details');
+        detailsDiv.innerHTML = `
+          <p><strong>User ID:</strong> #${user.id}</p>
+          <p><strong>Name:</strong> ${user.name}</p>
+          <p><strong>Email:</strong> ${user.email}</p>
+          <p><strong>Joined:</strong> ${new Date(user.createdAt).toLocaleDateString()}</p>
+          <p><strong>Total Orders:</strong> ${user.orders.length}</p>
+          
+          <h3 style="margin-top: var(--space-lg);">Order History</h3>
+          ${user.orders.length > 0 ? `
+            <div class="order-items">
+              ${user.orders.map(order => `
+                <div class="order-item">
+                  <div>
+                    <div style="font-weight: 600;">Order #${order.id}</div>
+                    <div style="font-size: var(--text-sm); color: var(--medium-gray);">
+                      ${new Date(order.createdAt).toLocaleDateString()} • ${order.orderItems.length} items
+                    </div>
+                  </div>
+                  <div>
+                    <div style="font-weight: 700;">₹${Math.round(order.totalAmount)}</div>
+                    <div><span class="status-badge status-${order.status.toLowerCase()}">${order.status}</span></div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          ` : '<p>No orders yet</p>'}
+        `;
+        
+        document.getElementById('user-modal').classList.add('active');
+      } catch (error) {
+        console.error('Error loading user details:', error);
+        alert('Error loading user details');
+      }
+    }
+    
+    // Close modals
+    document.querySelectorAll('.close-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.modal').forEach(modal => modal.classList.remove('active'));
+      });
+    });
+    
+    // Function to print GST Bill
+    window.printGSTBill = function(orderId) {
+      const order = window.activeOrderForPrint;
+      if (!order) return;
+
+      const printWindow = window.open('', '_blank');
+      const itemsHtml = order.orderItems.map(item => {
+        const basePrice = item.price / 1.05;
+        const gstAmount = item.price - basePrice;
+        return `
+          <tr>
+            <td style="padding: 10px; border: 1px solid #ddd;">${item.productName}</td>
+            <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">${item.quantity}</td>
+            <td style="padding: 10px; border: 1px solid #ddd; text-align: right;">₹${basePrice.toFixed(2)}</td>
+            <td style="padding: 10px; border: 1px solid #ddd; text-align: right;">₹${(gstAmount * item.quantity).toFixed(2)}</td>
+            <td style="padding: 10px; border: 1px solid #ddd; text-align: right; font-weight: bold;">₹${(item.quantity * item.price).toFixed(2)}</td>
+          </tr>
+        `;
+      }).join('');
+
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>GST Bill - Order #${order.id}</title>
+            <style>
+              * { margin: 0; padding: 0; box-sizing: border-box; }
+              body { font-family: 'Segoe UI', sans-serif; padding: 30px 50px; color: #333; line-height: 1.4; }
+              .header { margin-bottom: 20px; text-align: left; }
+              .header img { display: block; margin-left: -5px; max-height: 100px; }
+              .logo { color: #4CAF50; font-size: 28px; font-weight: 800; margin: 0; }
+              .invoice-title { border-bottom: 2px solid #4CAF50; padding-bottom: 15px; margin-bottom: 30px; }
+              .invoice-title h2 { font-size: 24px; color: #000; margin-bottom: 5px; }
+              .address-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 40px; }
+              .address-box { background: #f9f9f9; padding: 20px; border-radius: 8px; }
+              .address-box h4 { margin-top: 0; color: #4CAF50; border-bottom: 1px solid #ddd; padding-bottom: 8px; }
+              table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+              th { background: #4CAF50; color: white; padding: 12px; text-align: left; }
+              td { padding: 12px; border: 1px solid #ddd; }
+              .total-row { background: #f2f2f2; font-weight: bold; font-size: 18px; }
+              .footer { text-align: center; font-size: 12px; color: #888; margin-top: 50px; }
+              @media print {
+                .no-print { display: none; }
+                body { padding: 0.5cm; }
+              }
+            </style>
+          </head>
+          <body>
+            <div class="header">
+              <img src="/images/nutrikitchenLogo.png" alt="Nutri Kitchen">
+            </div>
+
+            <div class="invoice-title">
+              <h2 style="margin: 0;">Tax Invoice / Bill of Supply</h2>
+              <p style="margin: 5px 0;"><strong>Invoice No:</strong> INV-${order.id} | <strong>Date:</strong> ${new Date(order.createdAt).toLocaleDateString()}</p>
+            </div>
+
+            <div class="address-grid">
+              <div class="address-box">
+                <h4>Sold By (From):</h4>
+                <p><strong>SMS AGRO</strong></p>
+                <p>GSTIN: 32AFKFS2051L1ZX</p>
+                <p>Parakulam, P O, Kunissery,</p>
+                <p>Palakkad, Kerala - 678681</p>
+              </div>
+              <div class="address-box">
+                <h4>Billed To (To):</h4>
+                <p><strong>${order.customerName || order.user.name}</strong></p>
+                <p>${order.customerPhone || order.user.phone || ''}</p>
+                <p>${order.shippingAddress || 'N/A'}</p>
+                <p>${order.city || ''}, ${order.state || ''} - ${order.pincode || ''}</p>
+              </div>
+            </div>
+
+            <table>
+              <thead>
+                <tr>
+                  <th>Description</th>
+                  <th style="text-align: center;">Qty</th>
+                  <th style="text-align: right;">Unit Price</th>
+                  <th style="text-align: right;">GST (5%)</th>
+                  <th style="text-align: right;">Total Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${itemsHtml}
+              </tbody>
+              <tfoot>
+                <tr class="total-row">
+                  <td colspan="4" style="text-align: right;">Grand Total:</td>
+                  <td style="text-align: right; color: #4CAF50;">₹${order.totalAmount.toFixed(2)}</td>
+                </tr>
+              </tfoot>
+            </table>
+
+            <div style="background: #fff8e1; border-left: 5px solid #ffc107; padding: 15px;">
+              <p style="margin: 0; font-size: 13px;">This is a computer-generated invoice and does not require a signature. The amount is inclusive of GST where applicable.</p>
+            </div>
+
+            <div class="footer">
+              <p>Thank you for your business!</p>
+              <p>www.nutrikitchen.in</p>
+            </div>
+
+            <div class="no-print" style="margin-top: 30px; text-align: center;">
+              <button onclick="window.print()" style="padding: 10px 20px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">Print Now</button>
+            </div>
+          </body>
+        </html>
+      `);
+      printWindow.document.close();
+    };
+
+    document.querySelectorAll('.modal').forEach(modal => {
+      modal.addEventListener('click', function(e) {
+        if (e.target === this) {
+          this.classList.remove('active');
+        }
+      });
+    });
+    
+    // Logout
+    document.getElementById('logout-btn').addEventListener('click', function() {
+      localStorage.removeItem('nutriToken');
+      localStorage.removeItem('nutriUser');
+      window.location.href = 'login.html';
+    });
+    
+    // Initial load
+    loadStats();
+
+    // Check for deep linking
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('view') === 'order' && urlParams.get('id')) {
+      const orderId = urlParams.get('id');
+      // Delay a bit to ensure loads are done or just trigger
+      setTimeout(() => {
+        viewOrder(orderId);
+      }, 500);
+    }
+  </script>
+  
+</body>
+</html>

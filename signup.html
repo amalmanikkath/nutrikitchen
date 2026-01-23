@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up | Nutri Kitchen</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/validation.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    .auth-container {
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-xl);
+    }
+    .auth-box {
+      background: white;
+      padding: var(--space-3xl);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-xl);
+      max-width: 450px;
+      width: 100%;
+    }
+    .auth-header {
+      text-align: center;
+      margin-bottom: var(--space-2xl);
+    }
+    .auth-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: var(--text-2xl);
+      color: var(--primary-dark);
+      margin-bottom: var(--space-xs);
+    }
+    .form-group {
+      margin-bottom: var(--space-lg);
+    }
+    .form-label {
+      display: block;
+      margin-bottom: var(--space-sm);
+      font-weight: 600;
+      font-size: var(--text-sm);
+      white-space: nowrap;
+    }
+    .form-input {
+      width: 100%;
+      padding: var(--space-md);
+      border: 2px solid var(--light-gray);
+      border-radius: var(--radius-md);
+      transition: all 0.3s ease;
+    }
+    .form-input:focus {
+      border-color: var(--primary-green);
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.1);
+    }
+    .auth-footer {
+      text-align: center;
+      margin-top: var(--space-xl);
+      font-size: var(--text-sm);
+    }
+    .auth-footer a {
+      color: var(--primary-green);
+      font-weight: 600;
+    }
+    @media (max-width: 768px) {
+      .form-input,
+      input[type="text"],
+      input[type="email"],
+      input[type="password"],
+      input[type="tel"],
+      textarea,
+      select {
+        padding: 10px 12px !important;
+      }
+      .auth-box {
+        padding: var(--space-xl);
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <img src="images/nutrikitchen.jpg" alt="Logo">
+      </a>
+      <ul class="nav-menu">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="products.html" class="nav-link">Products</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="auth-container">
+    <div class="auth-box animate-scale-in">
+      <div class="auth-header">
+        <h1 class="auth-title">Create Account</h1>
+        <p>Join Nutri Kitchen for healthy living</p>
+      </div>
+      
+      <!-- Message Container -->
+      <div id="auth-message" style="display: none; padding: 10px; margin-bottom: 20px; border-radius: 4px; text-align: center; font-size: 14px;"></div>
+
+      <form id="signup-form">
+        <!-- Step 1: Email and Name -->
+        <div id="step-1" class="form-step">
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input type="text" id="name" class="form-input" placeholder="Your Name" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" id="email" class="form-input" placeholder="name@example.com" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone Number</label>
+            <div style="display: flex; gap: 10px;">
+              <input type="text" value="+91" readonly style="width: 60px; text-align: center; background-color: #f5f5f5; border: 2px solid var(--light-gray); border-radius: var(--radius-md);">
+              <input type="tel" id="user-phone" class="form-input" placeholder="9876543210" maxlength="10" pattern="[0-9]{10}" required oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+            </div>
+            <!-- Hidden input to store full phone for backend -->
+            <input type="hidden" id="phone">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Address</label>
+            <textarea id="address" class="form-input" placeholder="House/Flat No, Street, Landmark" rows="2" style="resize: none;" required></textarea>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md);">
+            <div class="form-group">
+              <label class="form-label">City (Auto-filled)</label>
+              <input type="text" id="city" class="form-input" placeholder="City" readonly style="background-color: #f5f5f5; cursor: not-allowed;" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Pincode</label>
+              <input type="text" id="pincode" class="form-input" placeholder="680001" maxlength="6" pattern="[0-9]{6}" required oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">State (Auto-filled)</label>
+            <select id="state" class="form-input" disabled required style="background-color: #f5f5f5; cursor: not-allowed;">
+              <option value="" disabled selected>Select State</option>
+              <option value="Kerala">Kerala</option>
+              <option value="Tamil Nadu">Tamil Nadu</option>
+              <option value="Karnataka">Karnataka</option>
+              <option value="Maharashtra">Maharashtra</option>
+              <option value="Delhi">Delhi</option>
+              <option value="Andhra Pradesh">Andhra Pradesh</option>
+              <option value="Telangana">Telangana</option>
+              <option value="West Bengal">West Bengal</option>
+              <option value="Gujarat">Gujarat</option>
+              <option value="Rajasthan">Rajasthan</option>
+              <option value="Uttar Pradesh">Uttar Pradesh</option>
+              <option value="Bihar">Bihar</option>
+              <option value="Madhya Pradesh">Madhya Pradesh</option>
+              <option value="Punjab">Punjab</option>
+              <option value="Haryana">Haryana</option>
+              <option value="Odisha">Odisha</option>
+              <option value="Assam">Assam</option>
+              <option value="Others">Others</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input type="password" id="password" class="form-input" placeholder="••••••••" required>
+          </div>
+          <button type="button" id="send-otp-btn" class="btn btn-primary" style="width: 100%;">Send OTP</button>
+        </div>
+
+        <!-- Step 2: OTP Verification -->
+        <div id="step-2" class="form-step" style="display: none;">
+          <div class="form-group">
+            <label class="form-label">Enter OTP</label>
+            <input type="text" id="otp" class="form-input" placeholder="6-digit OTP" maxlength="6" pattern="[0-9]{6}" required>
+            <p style="font-size: var(--text-sm); color: var(--secondary-gray); margin-top: var(--space-sm);">
+              We've sent a verification code to <strong id="verification-display"></strong>
+            </p>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: var(--space-sm);">Verify & Sign Up</button>
+          <button type="button" id="resend-otp-btn" class="btn" style="width: 100%; background: transparent; color: var(--primary-green); border: 2px solid var(--primary-green);">Resend OTP</button>
+          <button type="button" id="back-btn" class="btn" style="width: 100%; margin-top: var(--space-sm); background: transparent; color: var(--secondary-gray); border: 2px solid var(--light-gray);">← Back</button>
+        </div>
+      </form>
+      <div class="auth-footer">
+        <p>Already have an account? <a href="login.html" id="login-link">Login here</a></p>
+      </div>
+      <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirect = urlParams.get('redirect');
+        if (redirect) {
+          document.getElementById('login-link').href = `login.html?redirect=${encodeURIComponent(redirect)}`;
+        }
+      </script>
+    </div>
+  </div>
+
+  <script src="js/auth.js?v=4"></script>
+</body>
+</html>

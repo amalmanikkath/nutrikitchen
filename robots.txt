@@ -1,0 +1,24 @@
+# Nutri Kitchen - Robots.txt
+# This file tells search engine crawlers which pages to index
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /checkout.html
+Disallow: /cart.html
+
+# Sitemap location
+Sitemap: https://www.nutrikitchen.in/sitemap.xml
+
+# Crawl delay (optional, helps prevent server overload)
+Crawl-delay: 1
+
+# Allow specific bots
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /images/
+
+User-agent: Bingbot
+Allow: /
