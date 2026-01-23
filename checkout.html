@@ -577,7 +577,8 @@
         
         if (!orderResponse.ok) {
           if (overlay) overlay.style.display = 'none';
-          throw new Error(orderData.message || 'Failed to create order');
+          const errorDetail = orderData.error ? ` (${orderData.error})` : '';
+          throw new Error((orderData.message || 'Failed to create order') + errorDetail);
         }
         
         console.log('[CHECKOUT] Opening Razorpay...');

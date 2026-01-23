@@ -34,7 +34,7 @@ router.post('/sync', authenticate, async (req, res) => {
       await prisma.cartItem.createMany({
         data: items.map(item => ({
           userId: req.userId,
-          productId: item.productId,
+          productId: String(item.productId),
           quantity: item.quantity
         }))
       });

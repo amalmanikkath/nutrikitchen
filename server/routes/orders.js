@@ -44,43 +44,65 @@ router.post('/create', authenticate, async (req, res) => {
   try {
     const { amount, items, shippingDetails } = req.body;
     
-    const options = {
-      amount: Math.round(amount * 100), // amount in paise
-      currency: 'INR',
-      receipt: `receipt_${Date.now()}`,
-    };
-    
-    const rpOrder = await razorpay.orders.create(options);
-    
-    // Save order in DB as PENDING
-    const dbOrder = await prisma.order.create({
-      data: {
-        userId: req.userId,
-        razorpayOrderId: rpOrder.id,
-        totalAmount: amount,
-        status: 'PENDING',
-        customerName: shippingDetails?.fullName,
-        customerEmail: shippingDetails?.email,
-        customerPhone: shippingDetails?.phone,
-        shippingAddress: shippingDetails?.address,
-        city: shippingDetails?.city,
-        state: shippingDetails?.state,
-        pincode: shippingDetails?.pincode,
-        orderItems: {
-          create: items.map(item => ({
-            productId: item.id,
-            productName: item.name,
-            quantity: item.quantity,
-            price: item.price
-          }))
-        }
+    // 1. Create Order in Razorpay
+    let rpOrder;
+    try {
+      if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+        throw new Error('Razorpay keys are not configured on the server');
       }
-    });
+
+      const options = {
+        amount: Math.round(amount * 100), // amount in paise
+        currency: 'INR',
+        receipt: `receipt_${Date.now()}`,
+      };
+
+      rpOrder = await razorpay.orders.create(options);
+    } catch (rpError) {
+      console.error('Razorpay Error:', rpError);
+      return res.status(500).json({
+        message: 'Error creating Razorpay order',
+        error: rpError.message || rpError
+      });
+    }
     
-    res.json({ orderId: rpOrder.id, amount: rpOrder.amount, currency: rpOrder.currency });
+    // 2. Save order in DB as PENDING
+    try {
+      const dbOrder = await prisma.order.create({
+        data: {
+          userId: req.userId,
+          razorpayOrderId: rpOrder.id,
+          totalAmount: amount,
+          status: 'PENDING',
+          customerName: shippingDetails?.fullName,
+          customerEmail: shippingDetails?.email,
+          customerPhone: shippingDetails?.phone,
+          shippingAddress: shippingDetails?.address,
+          city: shippingDetails?.city,
+          state: shippingDetails?.state,
+          pincode: shippingDetails?.pincode,
+          orderItems: {
+            create: items.map(item => ({
+              productId: String(item.id),
+              productName: item.name,
+              quantity: item.quantity,
+              price: item.price
+            }))
+          }
+        }
+      });
+
+      res.json({ orderId: rpOrder.id, amount: rpOrder.amount, currency: rpOrder.currency });
+    } catch (dbError) {
+      console.error('Database Error (Order Creation):', dbError);
+      res.status(500).json({
+        message: 'Order created with payment gateway but failed to save in database',
+        error: dbError.message || dbError
+      });
+    }
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Error creating Razorpay order', error });
+    console.error('General Order Creation Error:', error);
+    res.status(500).json({ message: 'Internal server error during checkout', error: error.message || error });
   }
 });
 
