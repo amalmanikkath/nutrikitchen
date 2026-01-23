@@ -86,7 +86,7 @@ router.get('/users', authenticate, async (req, res) => {
 router.get('/orders/:orderId', authenticate, async (req, res) => {
   try {
     const order = await prisma.order.findUnique({
-      where: { id: parseInt(req.params.orderId) },
+      where: { id: req.params.orderId },
       include: {
         user: {
           select: {
@@ -114,7 +114,7 @@ router.get('/orders/:orderId', authenticate, async (req, res) => {
 router.get('/users/:userId', authenticate, async (req, res) => {
   try {
     const user = await prisma.user.findUnique({
-      where: { id: parseInt(req.params.userId) },
+      where: { id: req.params.userId },
       select: {
         id: true,
         name: true,
