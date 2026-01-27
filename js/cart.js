@@ -199,39 +199,37 @@ class ShoppingCart {
     return this.items.reduce((total, item) => total + item.quantity, 0);
   }
   
-  // Get cart subtotal
-  getSubtotal() {
-    console.log('ShoppingCart.getSubtotal() called');
-    if (!this.items || this.items.length === 0) {
-      console.log('Cart is empty, subtotal 0');
-      return 0;
-    }
+  // Get cart gross total (Sum of Price * Quantity)
+  getGrossTotal() {
+    if (!this.items || this.items.length === 0) return 0;
     
-    const subtotal = this.items.reduce((total, item) => {
+    return this.items.reduce((total, item) => {
       const price = Number(item.product.price) || 0;
       const qty = Number(item.quantity) || 0;
-      const lineTotal = price * qty;
-      console.log(`- Item: ${item.product.name}, P=${price}, Q=${qty}, LineSum=${lineTotal}`);
-      return total + lineTotal;
+      return total + (price * qty);
     }, 0);
-    
-    console.log(`Subtotal Result: ${subtotal}`);
-    return subtotal;
+  }
+
+  // Get cart subtotal (Base Price excluding Tax)
+  getSubtotal() {
+    const grossTotal = this.getGrossTotal();
+    // Assuming 5% GST is INCLUSIVE in the product price
+    // Base = Gross / 1.05
+    return Math.round(grossTotal / 1.05);
   }
   
   // Calculate shipping
   getShipping() {
-    const subtotal = this.getSubtotal();
-    if (subtotal >= SITE_CONFIG.shipping.freeShippingThreshold) {
-      return 0;
-    }
-    return SITE_CONFIG.shipping.charges;
+    // Shipping is free as per new requirement
+    return 0;
   }
   
   // Calculate tax
   getTax() {
+    const grossTotal = this.getGrossTotal();
     const subtotal = this.getSubtotal();
-    return Math.round(subtotal * SITE_CONFIG.tax);
+    // Tax is the difference between Gross and Base
+    return grossTotal - subtotal;
   }
   
   // Get total

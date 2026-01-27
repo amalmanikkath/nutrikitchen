@@ -263,11 +263,11 @@
           <span class="summary-total" id="checkout-total">₹0</span>
         </div>
         
-        <div style="background: var(--off-white); padding: var(--space-md); border-radius: var(--radius-md); margin-top: var(--space-lg);">
-          <p style="font-size: var(--text-sm); color: var(--dark-gray); margin: 0;">
+        <div
+          style="background: var(--off-white); padding: var(--space-md); border-radius: var(--radius-md); margin-top: var(--space-lg);">
             ✓ Secure checkout<br>
             ✓ 100% money-back guarantee<br>
-            ✓ Free shipping on orders above ₹500
+            ✓ Free shipping on all orders
           </p>
         </div>
       </div>
@@ -404,24 +404,15 @@
         
         const currency = '₹';
         
-        // Calculate totals
-        let subtotal = 0;
+        // Calculate totals (Gross)
+        let grossTotal = 0;
         items.forEach(item => {
           if (item.product && item.product.price && item.quantity) {
-            subtotal += (Number(item.product.price) * Number(item.quantity));
+            grossTotal += (Number(item.product.price) * Number(item.quantity));
           }
         });
         
-        console.log(`[CHECKOUT] Calculated subtotal: ${currency}${subtotal}`);
-        
-        // Calculate shipping (free over ₹500)
-        const shipping = subtotal >= 500 ? 0 : 50;
-        
-        // Calculate tax (5% GST)
-        const tax = Math.round(subtotal * 0.05);
-        
-        // Calculate total
-        const total = subtotal + shipping + tax;
+        console.log(`[CHECKOUT] Calculated gross total: ${currency}${grossTotal}`);
         
         // Render items list
         if (summaryList) {
@@ -445,16 +436,32 @@
           summaryList.innerHTML = itemsHTML;
         }
         
-        // Update totals
-        if (subtotalEl) subtotalEl.innerHTML = `${currency}${Math.round(subtotal)}`;
+        // New Calculation Logic (Inclusive Tax & Free Shipping)
+
+        // Shipping is FREE
+        const shipping = 0;
+
+        // Tax is INCLUSIVE (5% GST calculated backward)
+        // Base Price = Gross / 1.05
+        const basePrice = Math.round(grossTotal / 1.05);
+        const tax = grossTotal - basePrice;
+
+        // Update display values
+        // "Subtotal" in UI will show the Base Price (Pre-tax)
+        if (subtotalEl) subtotalEl.innerHTML = `${currency}${basePrice}`;
+        
         if (shippingEl) {
-          shippingEl.innerHTML = shipping === 0 ? 'FREE' : `${currency}${shipping}`;
-          shippingEl.style.color = shipping === 0 ? '#27ae60' : '#2d3748';
+          shippingEl.innerHTML = 'FREE';
+          shippingEl.style.color = '#27ae60';
         }
+
         if (taxEl) taxEl.innerHTML = `${currency}${tax}`;
+
+        // Total is just the Gross Total (since shipping is 0 and tax is included)
+        const total = grossTotal;
         if (totalEl) totalEl.innerHTML = `${currency}${total}`;
         
-        console.log(`[CHECKOUT] ✅ Summary updated - Subtotal: ${currency}${subtotal}, Shipping: ${shipping === 0 ? 'FREE' : currency + shipping}, Tax: ${currency}${tax}, Total: ${currency}${total}`);
+        console.log(`[CHECKOUT] ✅ Summary updated - Gross: ${currency}${grossTotal}, Base: ${currency}${basePrice}, Tax: ${currency}${tax}, Total: ${currency}${total}`);
         
       } catch (error) {
         console.error('[CHECKOUT] Error updating summary:', error);
