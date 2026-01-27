@@ -16,6 +16,7 @@ model User {
   address   String?
   pincode   String?
   state     String?
+  city      String?
   isVerified Boolean @default(false)
   orders    Order[]
   cartItems CartItem[]

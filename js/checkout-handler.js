@@ -13,7 +13,7 @@ async function processCheckout(event) {
   event.preventDefault();
   
   if (!window.auth.isLoggedIn()) {
-    alert('Please login to place an order');
+    await showAlert('Please login to place an order', 'warning');
     window.location.href = 'login.html';
     return false;
   }
@@ -29,7 +29,7 @@ async function processCheckout(event) {
   
   // Get cart info  
   if (!window.cart) {
-    alert('Cart not found. Please refresh the page.');
+    await showAlert('Cart not found. Please refresh the page.', 'error');
     return false;
   }
 
@@ -37,7 +37,7 @@ async function processCheckout(event) {
   const total = window.cart.getTotal();
   
   if (cartItems.length === 0) {
-    alert('Your cart is empty!');
+    await showAlert('Your cart is empty!', 'warning');
     window.location.href = 'products.html';
     return false;
   }
@@ -93,7 +93,7 @@ async function processCheckout(event) {
           showSuccessMessage(orderData.orderId, formData);
           window.cart.clearCart();
         } else {
-          alert('Payment verification failed: ' + verifyData.message);
+          showAlert('Payment verification failed: ' + verifyData.message, 'error');
         }
       },
       prefill: {
@@ -108,13 +108,13 @@ async function processCheckout(event) {
 
     const rzp = new Razorpay(options);
     rzp.on('payment.failed', function (response){
-        alert("Payment Failed: " + response.error.description);
+      showAlert("Payment Failed: " + response.error.description, 'error');
     });
     rzp.open();
 
   } catch (error) {
     console.error('Checkout error:', error);
-    alert('Checkout error: ' + error.message);
+    showAlert('Checkout error: ' + error.message, 'error');
   }
   
   return false;

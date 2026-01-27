@@ -51,7 +51,7 @@ function renderProducts(productsToShow) {
             <link itemprop="availability" href="https://schema.org/${product.isComingSoon ? 'OutOfStock' : (product.inStock ? 'InStock' : 'OutOfStock')}">
           </div>
           ${product.isComingSoon ? 
-            `<button class="btn btn-coming-soon btn-sm" onclick="alert('This product is coming soon! Stay tuned.'); return false;">Coming Soon</button>` :
+    `<button class="btn btn-coming-soon btn-sm" onclick="showAlert('This product is coming soon! Stay tuned.', 'info'); return false;">Coming Soon</button>` :
             `<button onclick="quickAddToCart(this, ${product.id})" class="btn btn-primary btn-sm">Add to Cart</button>`
           }
         </div>

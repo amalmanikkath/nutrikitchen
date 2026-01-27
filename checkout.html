@@ -18,6 +18,7 @@
   
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/dialog.css">
   
   <!-- Favicon & App Icons -->
   <link rel="icon" type="image/png" href="images/nutrikitchenLogo.png">
@@ -285,6 +286,7 @@
   
   <!-- Scripts -->
   <script src="js/data.js"></script>
+  <script src="js/dialog.js"></script>
   <script src="js/analytics.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/cart.js"></script>
@@ -344,21 +346,33 @@
     });
 
     // Auto-populate user data
-    document.addEventListener('DOMContentLoaded', function() {
+          document.addEventListener('DOMContentLoaded', async function () {
+            const token = localStorage.getItem('nutriToken');
+            if (!token) return;
+
+            // 1. Try to fetch fresh data from server
+            try {
+              const response = await fetch(`${CHECKOUT_API_URL}/auth/profile`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+              });
+              if (response.ok) {
+                const freshUser = await response.json();
+                localStorage.setItem('nutriUser', JSON.stringify(freshUser));
+              }
+            } catch (err) { console.error('Error fetching fresh profile:', err); }
+
+          // 2. Populate from localStorage (now potentially refreshed)
       const user = JSON.parse(localStorage.getItem('nutriUser'));
       if (user) {
         if (user.name) document.getElementById('fullName').value = user.name;
         if (user.email) document.getElementById('email').value = user.email;
         if (user.phone) {
-          // Remove +91 if present for the field
           const displayPhone = user.phone.replace('+91', '').trim();
           document.getElementById('phone').value = displayPhone;
         }
         if (user.address) document.getElementById('address').value = user.address;
-        if (user.pincode) {
-           document.getElementById('pincode').value = user.pincode;
-           fetchPincodeData(user.pincode, 'city', 'state');
-        }
+        if (user.pincode) document.getElementById('pincode').value = user.pincode;
+        if (user.city) document.getElementById('city').value = user.city;
         if (user.state) document.getElementById('state').value = user.state;
       }
     });
@@ -488,7 +502,7 @@
     // Use existing API_URL or define a local one
       const CHECKOUT_API_URL = (window.location.protocol === 'https:')
         ? 'https://nutrikitchen.vercel.app/api'
-        : (window.API_URL || 'http://localhost:5000/api');
+        : (window.API_URL || '/api');
     
     async function processCheckout(event) {
       event.preventDefault();
@@ -497,7 +511,7 @@
       // Check if user is logged in
       const token = localStorage.getItem('nutriToken');
       if (!token) {
-        alert('Please login to place an order');
+        showAlert('Please login to place an order', 'warning');
         window.location.href = 'login.html';
         return false;
       }
@@ -515,14 +529,14 @@
       // Get cart info from localStorage
       const cartData = localStorage.getItem('nutriKitchenCart');
       if (!cartData) {
-        alert('Your cart is empty!');
+        showAlert('Your cart is empty!', 'warning');
         window.location.href = 'products.html';
         return false;
       }
       
       const cartItems = JSON.parse(cartData);
       if (cartItems.length === 0) {
-        alert('Your cart is empty!');
+        showAlert('Your cart is empty!', 'warning');
         window.location.href = 'products.html';
         return false;
       }
@@ -622,12 +636,12 @@
                 showSuccessMessage(orderData.orderId, formData);
               } else {
                 if (overlay) overlay.style.display = 'none';
-                alert('Payment verification failed: ' + verifyData.message);
+                showAlert('Payment verification failed: ' + verifyData.message, 'error');
               }
             } catch (error) {
               if (overlay) overlay.style.display = 'none';
               console.error('[CHECKOUT] Verification error:', error);
-              alert('Payment verification failed: ' + error.message);
+              showAlert('Payment verification failed: ' + error.message, 'error');
             }
           },
           prefill: {
@@ -644,7 +658,7 @@
         rzp.on('payment.failed', function (response) {
           if (overlay) overlay.style.display = 'none';
           console.error('[RAZORPAY] Payment failed:', response.error);
-          alert("Payment Failed: " + response.error.description);
+          showAlert("Payment Failed: " + response.error.description, 'error');
         });
         
         // Hide overlay once Razorpay window is ready to take over
@@ -655,7 +669,7 @@
         
       } catch (error) {
         console.error('[CHECKOUT] Error:', error);
-        alert('Checkout error: ' + error.message);
+        showAlert('Checkout error: ' + error.message, 'error');
       }
       
       return false;

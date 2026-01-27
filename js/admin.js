@@ -183,9 +183,10 @@ function handleAddProduct(event) {
 }
 
 // Delete product with confirmation
-function deleteProductConfirm(id) {
+async function deleteProductConfirm(id) {
   const product = productManager.getProduct(id);
-  if (confirm(`Are you sure you want to delete "${product.name}"?`)) {
+  const confirmed = await showConfirm(`Are you sure you want to delete "${product.name}"?`);
+  if (confirmed) {
     productManager.deleteProduct(id);
     showSuccess('Product deleted successfully!');
     renderProductsTable();

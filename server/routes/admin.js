@@ -53,6 +53,11 @@ router.get('/users', authenticate, async (req, res) => {
         name: true,
         email: true,
         createdAt: true,
+        address: true,
+        city: true,
+        state: true,
+        pincode: true,
+        phone: true,
         orders: {
           select: {
             id: true,
@@ -137,6 +142,35 @@ router.get('/users/:userId', authenticate, async (req, res) => {
   } catch (error) {
     console.error('Error fetching user:', error);
     res.status(500).json({ message: 'Error fetching user', error: error.message });
+  }
+});
+
+// Delete user
+router.delete('/users/:userId', authenticate, async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    // First delete user's cart items
+    await prisma.cartItem.deleteMany({ where: { userId } });
+
+    // Note: Due to foreign key constraints, we might want to handle orders
+    // Option 1: Delete everything (aggressive)
+    // Option 2: Keep orders but remove user link (set userId to null or a ghost user)
+    // For now, we'll try to delete related order items and orders first to be clean
+    const orders = await prisma.order.findMany({ where: { userId } });
+    const orderIds = orders.map(o => o.id);
+
+    await prisma.orderItem.deleteMany({ where: { orderId: { in: orderIds } } });
+    await prisma.order.deleteMany({ where: { userId } });
+
+    await prisma.user.delete({
+      where: { id: userId }
+    });
+
+    res.json({ message: 'User and all related data deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    res.status(500).json({ message: 'Error deleting user', error: error.message });
   }
 });
 

@@ -184,7 +184,7 @@ router.post('/send-otp', async (req, res) => {
 // Verify OTP and register user
 router.post('/verify-otp', async (req, res) => {
   try {
-    const { email, phone, otp, password, name, address, pincode, state } = req.body;
+    const { email, phone, otp, password, name, address, pincode, state, city } = req.body;
     
     if (!email && !phone) {
       return res.status(400).json({ message: 'Email or phone number is required' });
@@ -241,6 +241,7 @@ router.post('/verify-otp', async (req, res) => {
         address,
         pincode,
         state,
+        city,
         isVerified: true
       }
     });
@@ -260,6 +261,7 @@ router.post('/verify-otp', async (req, res) => {
         phone: user.phone,
         name: user.name,
         address: user.address,
+        city: user.city,
         pincode: user.pincode,
         state: user.state,
         isVerified: user.isVerified
@@ -399,9 +401,93 @@ router.post('/login', async (req, res) => {
     }
     
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
-    res.json({ token, user: { id: user.id, email: user.email, phone: user.phone, name: user.name } });
+    res.json({
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        phone: user.phone,
+        name: user.name,
+        address: user.address,
+        city: user.city,
+        state: user.state,
+        pincode: user.pincode
+      }
+    });
   } catch (error) {
     res.status(500).json({ message: 'Error logging in', error });
+  }
+});
+
+// Get user profile
+router.get('/profile', async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ message: 'Unauthorized' });
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Check if ID is a valid MongoDB ObjectId (24 hex chars)
+    const userId = String(decoded.userId);
+    if (!/^[0-9a-fA-F]{24}$/.test(userId)) {
+      return res.status(401).json({ message: 'Invalid session. Please login again.' });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        email: true,
+        phone: true,
+        name: true,
+        address: true,
+        pincode: true,
+        state: true,
+        city: true,
+        createdAt: true
+      }
+    });
+
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching profile', error: error.message });
+  }
+});
+
+// Update user profile
+router.post('/profile/update', async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) return res.status(401).json({ message: 'Unauthorized' });
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    const userId = String(decoded.userId);
+    if (!/^[0-9a-fA-F]{24}$/.test(userId)) {
+      return res.status(401).json({ message: 'Invalid session. Please login again.' });
+    }
+
+    const { name, phone, address, pincode, state, city } = req.body;
+
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: { name, phone, address, pincode, state, city }
+    });
+
+    res.json({
+      message: 'Profile updated successfully',
+      user: {
+        id: updatedUser.id,
+        email: updatedUser.email,
+        phone: updatedUser.phone,
+        name: updatedUser.name,
+        address: updatedUser.address,
+        pincode: updatedUser.pincode,
+        state: updatedUser.state,
+        city: updatedUser.city
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating profile', error: error.message });
   }
 });
 

@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/animations.css">
   <link rel="stylesheet" href="css/validation.css">
+  <link rel="stylesheet" href="css/dialog.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
   <style>
     .auth-container {
@@ -132,8 +133,8 @@
 
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md);">
             <div class="form-group">
-              <label class="form-label">City (Auto-filled)</label>
-              <input type="text" id="city" class="form-input" placeholder="City" readonly style="background-color: #f5f5f5; cursor: not-allowed;" required>
+              <label class="form-label">City (Auto-filled from Pincode)</label>
+              <input type="text" id="city" class="form-input" placeholder="Enter City or Pincode" required>
             </div>
             <div class="form-group">
               <label class="form-label">Pincode</label>
@@ -142,8 +143,8 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label">State (Auto-filled)</label>
-            <select id="state" class="form-input" disabled required style="background-color: #f5f5f5; cursor: not-allowed;">
+            <label class="form-label">State (Auto-filled from Pincode)</label>
+            <select id="state" class="form-input" required>
               <option value="" disabled selected>Select State</option>
               <option value="Kerala">Kerala</option>
               <option value="Tamil Nadu">Tamil Nadu</option>
@@ -199,6 +200,7 @@
     </div>
   </div>
 
+  <script src="js/dialog.js"></script>
   <script src="js/auth.js?v=4"></script>
 </body>
 </html>

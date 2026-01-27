@@ -12,6 +12,7 @@
   
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/dialog.css">
   
   <style>
     .admin-header {
@@ -386,6 +387,7 @@
     </div>
   </div>
   
+  <script src="../js/dialog.js"></script>
   <script>
       const API_URL = (window.location.protocol === 'https:')
         ? 'https://nutrikitchen.vercel.app/api'
@@ -448,7 +450,7 @@
             <td>₹${Math.round(order.totalAmount)}</td>
             <td><span class="status-badge status-${order.status.toLowerCase()}">${order.status}</span></td>
             <td>${new Date(order.createdAt).toLocaleDateString()}</td>
-            <td><button class="view-btn" onclick="viewOrder(${order.id})">View</button></td>
+            <td><button class="view-btn" onclick="viewOrder('${order.id}')">View</button></td>
           </tr>
         `).join('');
       } catch (error) {
@@ -474,7 +476,10 @@
             <td>${user.paidOrderCount}</td>
             <td>₹${Math.round(user.totalSpent)}</td>
             <td>${new Date(user.createdAt).toLocaleDateString()}</td>
-            <td><button class="view-btn" onclick="viewUser(${user.id})">View</button></td>
+            <td>
+              <button class="view-btn" onclick="viewUser('${user.id}')">View</button>
+              <button class="view-btn" style="background: var(--error); margin-left: 5px;" onclick="deleteUser('${user.id}', '${user.name}')">Delete</button>
+            </td>
           </tr>
         `).join('');
       } catch (error) {
@@ -528,7 +533,7 @@
         document.getElementById('order-modal').classList.add('active');
       } catch (error) {
         console.error('Error loading order details:', error);
-        alert('Error loading order details');
+        showAlert('Error loading order details', 'error');
       }
     }
     
@@ -545,6 +550,9 @@
           <p><strong>User ID:</strong> #${user.id}</p>
           <p><strong>Name:</strong> ${user.name}</p>
           <p><strong>Email:</strong> ${user.email}</p>
+          <p><strong>Phone:</strong> ${user.phone || 'N/A'}</p>
+          <p><strong>Address:</strong> ${user.address || 'N/A'}</p>
+          <p><strong>Location:</strong> ${user.city || ''}, ${user.state || ''} - ${user.pincode || ''}</p>
           <p><strong>Joined:</strong> ${new Date(user.createdAt).toLocaleDateString()}</p>
           <p><strong>Total Orders:</strong> ${user.orders.length}</p>
           
@@ -572,9 +580,34 @@
         document.getElementById('user-modal').classList.add('active');
       } catch (error) {
         console.error('Error loading user details:', error);
-        alert('Error loading user details');
-      }
-    }
+                    showAlert('Error loading user details', 'error');
+                  }
+                }
+
+                // Delete user
+                async function deleteUser(userId, name) {
+                  const confirmed = await showConfirm(`ARE YOU SURE? This will permanently delete user "${name}" and ALL their orders. This action cannot be undone.`, 'CRITICAL ACTION');
+                  if (confirmed) {
+                    try {
+                      const response = await fetch(`${API_URL}/admin/users/${userId}`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${token}` }
+                      });
+
+                      if (response.ok) {
+                        showAlert('User deleted successfully', 'success');
+                        loadUsers();
+                        loadStats();
+                      } else {
+                        const data = await response.json();
+                        showAlert('Error: ' + data.message, 'error');
+                      }
+                    } catch (error) {
+                      console.error('Error deleting user:', error);
+                      showAlert('Error connecting to server', 'error');
+                    }
+                  }
+                }
     
     // Close modals
     document.querySelectorAll('.close-btn').forEach(btn => {

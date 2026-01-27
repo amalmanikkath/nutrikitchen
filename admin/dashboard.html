@@ -12,6 +12,7 @@
   
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/animations.css">
+  <link rel="stylesheet" href="../css/dialog.css">
   
   <style>
     .admin-header {
@@ -293,6 +294,7 @@
   
   <!-- Scripts -->
   <script src="../js/data.js"></script>
+  <script src="../js/dialog.js"></script>
   <script src="../js/admin.js"></script>
   <script src="../js/main.js"></script>
   
@@ -396,7 +398,7 @@
         modal.style.display = 'flex';
       } catch (error) {
         console.error('Error loading order details:', error);
-        alert('Error loading order details');
+        showAlert('Error loading order details', 'error');
       }
     }
 

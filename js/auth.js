@@ -112,7 +112,7 @@ class Auth {
       // Scroll to message
       msgDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
     } else {
-      alert(message);
+      showAlert(message);
     }
   }
 
@@ -175,17 +175,14 @@ class Auth {
           // Auto-fill City
           const cityInput = document.getElementById('city');
           if (cityInput) {
-            cityInput.removeAttribute('readonly'); // Temporarily enable
             cityInput.value = details.District;
             // Manually trigger input event to clear validation errors
             cityInput.dispatchEvent(new Event('input', { bubbles: true }));
-            cityInput.setAttribute('readonly', 'true'); // Re-disable
           }
           
           // Auto-fill State
           const stateSelect = document.getElementById('state');
           if (stateSelect) {
-            stateSelect.removeAttribute('disabled'); // Temporarily enable
             const apiState = details.State;
             // Try to match API state with select options
             let matched = false;
@@ -205,7 +202,6 @@ class Auth {
             }
             // Manually trigger change event to clear validation errors
             stateSelect.dispatchEvent(new Event('change', { bubbles: true }));
-            stateSelect.setAttribute('disabled', 'true'); // Re-disable
           }
         }
       } catch (error) {
@@ -240,16 +236,17 @@ class Auth {
         window.location.href = redirect || 'index.html';
       } else {
         if (response.status === 404) {
-          if (confirm(data.message || 'Email not found. Would you like to create a new account?')) {
+          const createAccount = await showConfirm(data.message || 'Email not found. Would you like to create a new account?', 'Register?');
+          if (createAccount) {
             window.location.href = 'signup.html';
           }
         } else {
-          alert(data.message || 'Login failed');
+          showAlert(data.message || 'Login failed', 'error');
         }
       }
     } catch (error) {
       console.error('Login error:', error);
-      alert('Error connecting to server');
+      showAlert('Error connecting to server', 'error');
     }
   }
 

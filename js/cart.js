@@ -425,7 +425,7 @@ function quickAddToCart(button, productId) {
     console.log('Product added successfully!');
   } catch (error) {
     console.error('Error in quickAddToCart:', error);
-    alert('Error adding to cart: ' + error.message);
+    showAlert('Error adding to cart: ' + error.message, 'error');
   }
 }
 
