@@ -1385,6 +1385,13 @@ img {
   .summary-total {
     font-size: 1.25rem;
   }
+.cart-header p {
+  text-align: center;
+}
+
+.checkout-header p {
+  text-align: center;
+}
 }
 
 /* === Checkout Specifics === */
