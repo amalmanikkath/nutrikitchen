@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test POST Product</title>
+    <style>
+        body { font-family: Arial; padding: 20px; max-width: 800px; margin: 0 auto; }
+        .section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #f9f9f9; }
+        button { padding: 12px 24px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin: 5px; }
+        button:hover { background: #218838; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        .result { margin-top: 15px; padding: 15px; border-radius: 4px; white-space: pre-wrap; font-family: monospace; font-size: 12px; }
+        .success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .info { background: #d1ecf1; border: 1px solid #bee5eb; color: #0c5460; }
+        input { padding: 8px; width: 100%; margin: 5px 0; border: 1px solid #ddd; border-radius: 4px; }
+        label { font-weight: bold; display: block; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test POST Product Endpoint</h1>
+    
+    <div class="section">
+        <h2>Step 1: Check Login Status</h2>
+        <button onclick="checkLogin()">Check if Logged In</button>
+        <div id="login-status"></div>
+    </div>
+
+    <div class="section">
+        <h2>Step 2: Test Product Data</h2>
+        <label>Product Name:</label>
+        <input type="text" id="productName" value="Test Product">
+        
+        <label>Price:</label>
+        <input type="number" id="productPrice" value="99">
+        
+        <label>Category:</label>
+        <select id="productCategory">
+            <option>Baby Food</option>
+            <option selected>Health Foods</option>
+            <option>Protein Foods</option>
+            <option>Traditional Foods</option>
+            <option>Natural Sweeteners</option>
+        </select>
+        
+        <br><br>
+        <button onclick="testAddProduct()">Test Add Product</button>
+        <div id="add-result"></div>
+    </div>
+
+    <div class="section">
+        <h2>Step 3: View All Products</h2>
+        <button onclick="viewProducts()">Get All Products</button>
+        <div id="products-list"></div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+        
+        function checkLogin() {
+            const token = localStorage.getItem('nutriToken');
+            const resultDiv = document.getElementById('login-status');
+            
+            if (token) {
+                try {
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            ✓ Logged in!
+                            
+User ID: ${payload.userId}
+Email: ${payload.email || 'N/A'}
+Token: ${token.substring(0, 50)}...
+                        </div>
+                    `;
+                } catch (e) {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            ✗ Token exists but is invalid
+                            
+Token: ${token.substring(0, 50)}...
+                        </div>
+                    `;
+                }
+            } else {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        ✗ Not logged in!
+                        
+Please login at: <a href="login.html">login.html</a>
+                    </div>
+                `;
+            }
+        }
+        
+        async function testAddProduct() {
+            const resultDiv = document.getElementById('add-result');
+            const token = localStorage.getItem('nutriToken');
+            
+            if (!token) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        ✗ No token found. Please login first.
+                    </div>
+                `;
+                return;
+            }
+            
+            const productData = {
+                name: document.getElementById('productName').value + ' ' + Date.now(),
+                description: 'This is a test product created at ' + new Date().toLocaleString(),
+                price: parseFloat(document.getElementById('productPrice').value),
+                originalPrice: parseFloat(document.getElementById('productPrice').value) + 50,
+                category: document.getElementById('productCategory').value,
+                image: 'images/nutrikitchen.jpg',
+                weight: '100g',
+                features: ['Test Feature 1', 'Test Feature 2', 'Natural Ingredients'],
+                inStock: true,
+                rating: 0,
+                reviews: 0
+            };
+            
+            resultDiv.innerHTML = '<div class="result info">Sending request...</div>';
+            
+            console.log('Sending POST request to:', `${API_URL}/products`);
+            console.log('With data:', productData);
+            console.log('With token:', token.substring(0, 50) + '...');
+            
+            try {
+                const response = await fetch(`${API_URL}/products`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(productData)
+                });
+                
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers);
+                
+                const responseText = await response.text();
+                console.log('Response text:', responseText);
+                
+                let data;
+                try {
+                    data = JSON.parse(responseText);
+                } catch (e) {
+                    data = responseText;
+                }
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            ✓ Product added successfully!
+                            
+Status: ${response.status}
+Response:
+${JSON.stringify(data, null, 2)}
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            ✗ Failed to add product
+                            
+Status: ${response.status}
+Response:
+${typeof data === 'string' ? data : JSON.stringify(data, null, 2)}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Request error:', error);
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        ✗ Request failed
+                        
+Error: ${error.message}
+                    </div>
+                `;
+            }
+        }
+        
+        async function viewProducts() {
+            const resultDiv = document.getElementById('products-list');
+            resultDiv.innerHTML = '<div class="result info">Loading products...</div>';
+            
+            try {
+                const response = await fetch(`${API_URL}/products`);
+                const data = await response.json();
+                
+                resultDiv.innerHTML = `
+                    <div class="result success">
+                        ✓ Found ${data.length} products
+                        
+${JSON.stringify(data, null, 2)}
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        ✗ Failed to load products
+                        
+Error: ${error.message}
+                    </div>
+                `;
+            }
+        }
+        
+        // Auto-check login on page load
+        window.onload = () => {
+            checkLogin();
+        };
+    </script>
+</body>
+</html>

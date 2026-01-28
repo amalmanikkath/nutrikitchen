@@ -73,11 +73,21 @@ model OrderItem {
 }
 
 model Product {
-  id          String  @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  description String
-  price       Float
-  image       String
-  category    String
-  inStock     Boolean @default(true)
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  description   String
+  price         Float
+  originalPrice Float?
+  image         String
+  category      String
+  inStock       Boolean  @default(true)
+  isComingSoon  Boolean  @default(false)
+  hidden        Boolean  @default(false)
+  weight        String?
+  rating        Float    @default(0)
+  reviews       Int      @default(0)
+  amazonLink    String?
+  features      String[] @default([])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }

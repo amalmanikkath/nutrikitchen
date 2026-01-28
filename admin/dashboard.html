@@ -119,6 +119,7 @@
       <div>
         <h1>Admin Dashboard</h1>
         <p>Manage your products and inventory</p>
+        <p id="user-login-status" style="font-size: 12px; margin-top: 4px; opacity: 0.9;"></p>
       </div>
       <div style="display: flex; gap: var(--space-md);">
         <a href="orders.html" class="btn" style="background: white; color: var(--primary-green); text-decoration: none;">
@@ -223,7 +224,17 @@
           
           <div class="form-group">
             <label class="form-label" for="image">Image Path</label>
-            <input type="text" id="image" name="image" class="form-input" placeholder="images/product.png">
+            <div style="display: flex; gap: var(--space-sm); align-items: flex-start;">
+              <input type="text" id="image" name="image" class="form-input" placeholder="images/product.png" style="flex: 1;">
+              <input type="file" id="image-upload" accept="image/*" style="display: none;">
+              <button type="button" id="upload-btn" class="btn" style="white-space: nowrap; padding: 10px 16px;">
+                Upload Image
+              </button>
+            </div>
+            <div id="image-preview" style="margin-top: var(--space-sm); display: none;">
+              <img id="preview-img" src="" alt="Preview" style="max-width: 150px; max-height: 150px; border-radius: var(--radius-md); border: 2px solid var(--light-gray);">
+              <button type="button" id="remove-preview" style="display: block; margin-top: var(--space-xs); font-size: var(--text-sm); color: var(--error-red); background: none; border: none; cursor: pointer; text-decoration: underline;">Remove</button>
+            </div>
           </div>
         </div>
         
@@ -299,6 +310,71 @@
   <script src="../js/main.js"></script>
   
   <script>
+    // Check user login status
+    function checkUserLoginStatus() {
+      const token = localStorage.getItem('nutriToken');
+      const statusEl = document.getElementById('user-login-status');
+      
+      if (token) {
+        // Try to decode the token to get user info
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          const userEmail = payload.email || 'User';
+          statusEl.innerHTML = `✓ Logged in as: ${userEmail}`;
+          statusEl.style.color = '#4ade80';
+        } catch (e) {
+          statusEl.innerHTML = '✓ User logged in';
+          statusEl.style.color = '#4ade80';
+        }
+      } else {
+        statusEl.innerHTML = '⚠ Not logged in as user - <a href="../login.html?redirect=admin/dashboard.html" style="color: white; text-decoration: underline;">Login here</a> to manage products';
+        statusEl.style.color = '#fbbf24';
+      }
+    }
+    
+    // Check on page load
+    checkUserLoginStatus();
+    
+    // Image Upload Functionality
+    let uploadedImageFile = null;
+
+    document.getElementById('upload-btn').addEventListener('click', () => {
+      document.getElementById('image-upload').click();
+    });
+
+    document.getElementById('image-upload').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        if (!file.type.startsWith('image/')) {
+          showAlert('Please select a valid image file', 'error');
+          return;
+        }
+
+        // Store the file for later upload
+        uploadedImageFile = file;
+
+        // Show preview
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          document.getElementById('preview-img').src = event.target.result;
+          document.getElementById('image-preview').style.display = 'block';
+          
+          // Set the image path to the filename (will be in images/ folder)
+          const imagePath = `images/${file.name}`;
+          document.getElementById('image').value = imagePath;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    document.getElementById('remove-preview').addEventListener('click', () => {
+      uploadedImageFile = null;
+      document.getElementById('image-upload').value = '';
+      document.getElementById('image').value = '';
+      document.getElementById('image-preview').style.display = 'none';
+      document.getElementById('preview-img').src = '';
+    });
+
     // Update total products count
     document.getElementById('total-products').textContent = productManager.getProducts().length;
 

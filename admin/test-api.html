@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Test - Nutri Kitchen Admin</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .test-section {
+      background: white;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    button {
+      background: #22c55e;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    button:hover {
+      background: #16a34a;
+    }
+    .result {
+      margin-top: 10px;
+      padding: 10px;
+      background: #f9f9f9;
+      border-left: 4px solid #22c55e;
+      white-space: pre-wrap;
+      font-family: monospace;
+      font-size: 12px;
+    }
+    .error {
+      border-left-color: #ef4444;
+      background: #fee;
+    }
+    .success {
+      border-left-color: #22c55e;
+      background: #efe;
+    }
+    .warning {
+      border-left-color: #f59e0b;
+      background: #fffbeb;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔧 API Connection Test</h1>
+  <p>Use this page to diagnose API connection issues</p>
+
+  <div class="test-section">
+    <h2>1. Check API URL</h2>
+    <button onclick="checkApiUrl()">Check API URL</button>
+    <div id="api-url-result"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>2. Check Server Health</h2>
+    <button onclick="checkServerHealth()">Test Server Connection</button>
+    <div id="health-result"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>3. Check User Login Status</h2>
+    <button onclick="checkUserLogin()">Check Login</button>
+    <div id="login-result"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>4. Test Get Products</h2>
+    <button onclick="testGetProducts()">Get Products</button>
+    <div id="products-result"></div>
+  </div>
+
+  <div class="test-section">
+    <h2>5. Test Add Product (Requires Login)</h2>
+    <button onclick="testAddProduct()">Add Test Product</button>
+    <div id="add-result"></div>
+  </div>
+
+  <script src="../js/data.js"></script>
+  <script>
+    function getApiUrl() {
+      const hostname = window.location.hostname;
+      if (hostname === 'localhost' || hostname === '127.0.0.1') {
+        return 'http://localhost:5000/api';
+      } else if (hostname.match(/^192\.168\./) || hostname.match(/^10\./) || hostname.match(/^172\./)) {
+        return `http://${hostname}:5000/api`;
+      } else {
+        return '/api';
+      }
+    }
+
+    function showResult(elementId, message, type = 'result') {
+      const el = document.getElementById(elementId);
+      el.className = `result ${type}`;
+      el.textContent = message;
+    }
+
+    function checkApiUrl() {
+      const apiUrl = getApiUrl();
+      showResult('api-url-result', `API URL: ${apiUrl}\n\nThis is where the frontend will send requests.`, 'success');
+    }
+
+    async function checkServerHealth() {
+      const apiUrl = getApiUrl();
+      try {
+        showResult('health-result', 'Testing connection...', 'warning');
+        const response = await fetch(`${apiUrl}/health`);
+        const data = await response.json();
+        showResult('health-result', 
+          `✓ Server is running!\n\nResponse:\n${JSON.stringify(data, null, 2)}`, 
+          'success'
+        );
+      } catch (error) {
+        showResult('health-result', 
+          `✗ Server connection failed!\n\nError: ${error.message}\n\nMake sure the server is running:\ncd server\nnpm run dev`, 
+          'error'
+        );
+      }
+    }
+
+    function checkUserLogin() {
+      const token = localStorage.getItem('nutriToken');
+      if (token) {
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          showResult('login-result', 
+            `✓ User is logged in!\n\nToken payload:\n${JSON.stringify(payload, null, 2)}`, 
+            'success'
+          );
+        } catch (e) {
+          showResult('login-result', 
+            `✓ Token exists but couldn't decode it\n\nToken: ${token.substring(0, 50)}...`, 
+            'warning'
+          );
+        }
+      } else {
+        showResult('login-result', 
+          `✗ No user login found!\n\nYou need to login as a user first.\nGo to: ${window.location.origin}/login.html`, 
+          'error'
+        );
+      }
+    }
+
+    async function testGetProducts() {
+      const apiUrl = getApiUrl();
+      try {
+        showResult('products-result', 'Fetching products...', 'warning');
+        const response = await fetch(`${apiUrl}/products`);
+        const data = await response.json();
+        showResult('products-result', 
+          `✓ Products fetched successfully!\n\nCount: ${data.length}\n\nFirst product:\n${JSON.stringify(data[0] || 'No products', null, 2)}`, 
+          'success'
+        );
+      } catch (error) {
+        showResult('products-result', 
+          `✗ Failed to fetch products!\n\nError: ${error.message}`, 
+          'error'
+        );
+      }
+    }
+
+    async function testAddProduct() {
+      const apiUrl = getApiUrl();
+      const token = localStorage.getItem('nutriToken');
+      
+      if (!token) {
+        showResult('add-result', 
+          `✗ Cannot test - no user login!\n\nPlease login first at: ${window.location.origin}/login.html`, 
+          'error'
+        );
+        return;
+      }
+
+      const testProduct = {
+        name: 'Test Product ' + Date.now(),
+        description: 'This is a test product',
+        price: 99,
+        originalPrice: 149,
+        category: 'Health Foods',
+        image: 'images/nutrikitchen.jpg',
+        weight: '100g',
+        features: ['Test Feature 1', 'Test Feature 2'],
+        inStock: true
+      };
+
+      try {
+        showResult('add-result', 'Adding test product...', 'warning');
+        const response = await fetch(`${apiUrl}/products`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(testProduct)
+        });
+
+        const data = await response.json();
+        
+        if (response.ok) {
+          showResult('add-result', 
+            `✓ Product added successfully!\n\nResponse:\n${JSON.stringify(data, null, 2)}`, 
+            'success'
+          );
+        } else {
+          showResult('add-result', 
+            `✗ Failed to add product!\n\nStatus: ${response.status}\nError: ${JSON.stringify(data, null, 2)}`, 
+            'error'
+          );
+        }
+      } catch (error) {
+        showResult('add-result', 
+          `✗ Request failed!\n\nError: ${error.message}`, 
+          'error'
+        );
+      }
+    }
+  </script>
+</body>
+</html>
