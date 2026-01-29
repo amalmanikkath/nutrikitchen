@@ -5,25 +5,30 @@ const path = require('path');
 /**
  * Generates an ultra-professional, branded Tax Invoice PDF for an order
  * @param {Object} order - Full order object from Prisma
- * @returns {Promise<string>} - Path to the generated PDF
+ * @returns {Promise<Buffer>} - PDF as a Buffer for email attachment
  */
 async function generateInvoicePDF(order) {
     return new Promise((resolve, reject) => {
         try {
             const doc = new PDFDocument({ 
-                margin: 0, // Set to 0 to handle custom margins/accents
+                margin: 0,
                 size: 'A4',
                 bufferPages: true 
             });
-            const fileName = `Invoice_${order.id}_${Date.now()}.pdf`;
-            const filePath = path.join(__dirname, '../temp', fileName);
             
-            if (!fs.existsSync(path.join(__dirname, '../temp'))) {
-                fs.mkdirSync(path.join(__dirname, '../temp'));
-            }
-
-            const stream = fs.createWriteStream(filePath);
-            doc.pipe(stream);
+            // Store PDF in memory instead of file system
+            const chunks = [];
+            
+            doc.on('data', (chunk) => chunks.push(chunk));
+            doc.on('end', () => {
+                const pdfBuffer = Buffer.concat(chunks);
+                console.log(`✅ PDF generated in memory, size: ${(pdfBuffer.length / 1024).toFixed(2)} KB`);
+                resolve(pdfBuffer);
+            });
+            doc.on('error', (err) => {
+                console.error('❌ PDF generation error:', err);
+                reject(err);
+            });
 
             // --- PREMIUM BRANDING ELEMENTS ---
             const primaryColor = '#2b6555'; // Nutri Kitchen Green
@@ -186,9 +191,6 @@ async function generateInvoicePDF(order) {
             doc.fillColor(lightTextColor).fontSize(9).font('Helvetica').text('www.nutrikitchen.in', 60, 815, { align: 'center', width: 500, link: 'https://nutrikitchen.in' });
 
             doc.end();
-
-            stream.on('finish', () => resolve(filePath));
-            stream.on('error', reject);
         } catch (err) {
             reject(err);
         }

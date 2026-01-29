@@ -142,8 +142,8 @@ router.post('/verify', async (req, res) => {
         }
       });
 
-      // 3. Generate PDF Invoice First
-      let pdfPath = null;
+      // 3. Generate PDF Invoice First (in memory for Vercel compatibility)
+      let pdfBuffer = null;
       try {
         console.log(`[PROCESS] Generating PDF Invoice for order #${fullOrder.id}...`);
         console.log(`[PROCESS] Order data:`, JSON.stringify({
@@ -153,21 +153,19 @@ router.post('/verify', async (req, res) => {
           itemsCount: fullOrder.orderItems?.length
         }));
         
-        pdfPath = await generateInvoicePDF(fullOrder);
+        pdfBuffer = await generateInvoicePDF(fullOrder);
         
-        // Verify PDF file exists and has content
-        if (pdfPath && fs.existsSync(pdfPath)) {
-          const stats = fs.statSync(pdfPath);
-          console.log(`✅ PDF Invoice generated successfully at: ${pdfPath}`);
-          console.log(`✅ PDF file size: ${(stats.size / 1024).toFixed(2)} KB`);
+        if (pdfBuffer && pdfBuffer.length > 0) {
+          console.log(`✅ PDF Invoice generated successfully in memory`);
+          console.log(`✅ PDF buffer size: ${(pdfBuffer.length / 1024).toFixed(2)} KB`);
         } else {
-          console.error('❌ PDF file was not created or path is invalid');
-          pdfPath = null;
+          console.error('❌ PDF buffer is empty or invalid');
+          pdfBuffer = null;
         }
       } catch (pdfError) {
         console.error('❌ PDF Generation FAILED:', pdfError);
         console.error('PDF Error Stack:', pdfError.stack);
-        pdfPath = null;
+        pdfBuffer = null;
       }
 
       // 4. Send Confirmation Email to Customer
@@ -262,15 +260,14 @@ router.post('/verify', async (req, res) => {
         };
 
         // Attach PDF to email if it was successfully generated
-        if (pdfPath && fs.existsSync(pdfPath)) {
-          console.log(`[EMAIL] Attaching PDF invoice: ${pdfPath}`);
+        if (pdfBuffer && pdfBuffer.length > 0) {
+          console.log(`[EMAIL] Attaching PDF invoice from memory buffer`);
           try {
-            const pdfStats = fs.statSync(pdfPath);
-            console.log(`[EMAIL] PDF file verified - Size: ${(pdfStats.size / 1024).toFixed(2)} KB`);
+            console.log(`[EMAIL] PDF buffer verified - Size: ${(pdfBuffer.length / 1024).toFixed(2)} KB`);
             
             mailOptions.attachments.push({
               filename: `Invoice_NUT${String(fullOrder.id).padStart(4, '0')}.pdf`,
-              path: pdfPath,
+              content: pdfBuffer,
               contentType: 'application/pdf'
             });
             console.log(`[EMAIL] PDF attachment added to email`);
@@ -278,10 +275,7 @@ router.post('/verify', async (req, res) => {
             console.error(`[EMAIL] Error attaching PDF:`, attachError);
           }
         } else {
-          console.warn(`[EMAIL] No PDF to attach - PDF generation may have failed or file doesn't exist`);
-          if (pdfPath) {
-            console.warn(`[EMAIL] Expected PDF path: ${pdfPath}`);
-          }
+          console.warn(`[EMAIL] No PDF to attach - PDF generation may have failed or buffer is empty`);
         }
 
         try {
@@ -289,21 +283,6 @@ router.post('/verify', async (req, res) => {
           const info = await transporter.sendMail(mailOptions);
           console.log(`✅ Confirmation email sent to ${customerEmail}: ${info.messageId}`);
           console.log(`✅ Email accepted by: ${info.accepted?.join(', ')}`);
-          
-          // Clean up PDF file after successful email send
-          if (pdfPath && fs.existsSync(pdfPath)) {
-            try {
-              // Wait a bit before deleting to ensure email is sent
-              setTimeout(() => {
-                if (fs.existsSync(pdfPath)) {
-                  fs.unlinkSync(pdfPath);
-                  console.log(`[CLEANUP] Deleted PDF file: ${pdfPath}`);
-                }
-              }, 5000);
-            } catch (cleanupError) {
-              console.warn(`[CLEANUP] Could not delete PDF file:`, cleanupError.message);
-            }
-          }
         } catch (emailError) {
           console.error('❌ Error sending confirmation email:', emailError);
           console.error('Email Error Details:', emailError.message);
