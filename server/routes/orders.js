@@ -146,11 +146,28 @@ router.post('/verify', async (req, res) => {
       let pdfPath = null;
       try {
         console.log(`[PROCESS] Generating PDF Invoice for order #${fullOrder.id}...`);
+        console.log(`[PROCESS] Order data:`, JSON.stringify({
+          id: fullOrder.id,
+          customerName: fullOrder.customerName,
+          totalAmount: fullOrder.totalAmount,
+          itemsCount: fullOrder.orderItems?.length
+        }));
+        
         pdfPath = await generateInvoicePDF(fullOrder);
-        console.log(`✅ PDF Invoice generated at: ${pdfPath}`);
+        
+        // Verify PDF file exists and has content
+        if (pdfPath && fs.existsSync(pdfPath)) {
+          const stats = fs.statSync(pdfPath);
+          console.log(`✅ PDF Invoice generated successfully at: ${pdfPath}`);
+          console.log(`✅ PDF file size: ${(stats.size / 1024).toFixed(2)} KB`);
+        } else {
+          console.error('❌ PDF file was not created or path is invalid');
+          pdfPath = null;
+        }
       } catch (pdfError) {
         console.error('❌ PDF Generation FAILED:', pdfError);
         console.error('PDF Error Stack:', pdfError.stack);
+        pdfPath = null;
       }
 
       // 4. Send Confirmation Email to Customer
@@ -245,24 +262,55 @@ router.post('/verify', async (req, res) => {
         };
 
         // Attach PDF to email if it was successfully generated
-        if (pdfPath) {
+        if (pdfPath && fs.existsSync(pdfPath)) {
           console.log(`[EMAIL] Attaching PDF invoice: ${pdfPath}`);
-          mailOptions.attachments.push({
-            filename: `Invoice_NUT${String(fullOrder.id).padStart(4, '0')}.pdf`,
-            path: pdfPath
-          });
+          try {
+            const pdfStats = fs.statSync(pdfPath);
+            console.log(`[EMAIL] PDF file verified - Size: ${(pdfStats.size / 1024).toFixed(2)} KB`);
+            
+            mailOptions.attachments.push({
+              filename: `Invoice_NUT${String(fullOrder.id).padStart(4, '0')}.pdf`,
+              path: pdfPath,
+              contentType: 'application/pdf'
+            });
+            console.log(`[EMAIL] PDF attachment added to email`);
+          } catch (attachError) {
+            console.error(`[EMAIL] Error attaching PDF:`, attachError);
+          }
         } else {
-          console.warn(`[EMAIL] No PDF to attach - PDF generation may have failed`);
+          console.warn(`[EMAIL] No PDF to attach - PDF generation may have failed or file doesn't exist`);
+          if (pdfPath) {
+            console.warn(`[EMAIL] Expected PDF path: ${pdfPath}`);
+          }
         }
 
         try {
-          console.log(`[EMAIL] Sending customer confirmation email...`);
+          console.log(`[EMAIL] Sending customer confirmation email with ${mailOptions.attachments.length} attachments...`);
           const info = await transporter.sendMail(mailOptions);
           console.log(`✅ Confirmation email sent to ${customerEmail}: ${info.messageId}`);
+          console.log(`✅ Email accepted by: ${info.accepted?.join(', ')}`);
+          
+          // Clean up PDF file after successful email send
+          if (pdfPath && fs.existsSync(pdfPath)) {
+            try {
+              // Wait a bit before deleting to ensure email is sent
+              setTimeout(() => {
+                if (fs.existsSync(pdfPath)) {
+                  fs.unlinkSync(pdfPath);
+                  console.log(`[CLEANUP] Deleted PDF file: ${pdfPath}`);
+                }
+              }, 5000);
+            } catch (cleanupError) {
+              console.warn(`[CLEANUP] Could not delete PDF file:`, cleanupError.message);
+            }
+          }
         } catch (emailError) {
           console.error('❌ Error sending confirmation email:', emailError);
           console.error('Email Error Details:', emailError.message);
           console.error('Email Error Stack:', emailError.stack);
+          if (emailError.response) {
+            console.error('Email Server Response:', emailError.response);
+          }
         }
       } else {
         console.warn(`[EMAIL] No customer email found for order #${fullOrder.id}`);
