@@ -27,6 +27,8 @@
     @media (max-width: 768px) {
       .profile-container {
         grid-template-columns: 1fr;
+        padding: 0 var(--space-md);
+        margin: var(--space-lg) auto;
       }
     }
 
@@ -38,6 +40,14 @@
       height: fit-content;
       position: sticky;
       top: 100px;
+    }
+
+    @media (max-width: 768px) {
+      .profile-card {
+        position: relative;
+        top: 0;
+        margin-bottom: var(--space-lg);
+      }
     }
 
     .profile-header {
@@ -178,7 +188,12 @@
       <a href="index.html" class="nav-logo">
         <img src="images/nutrikitchen.jpg" alt="Nutri Kitchen Logo">
       </a>
-      <ul class="nav-menu">
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <ul class="nav-menu" id="nav-menu">
         <li><a href="index.html" class="nav-link">Home</a></li>
         <li><a href="products.html" class="nav-link">Products</a></li>
         <li>
@@ -455,6 +470,33 @@
                             }
 
                             document.addEventListener('DOMContentLoaded', updateUI);
+
+    // Hamburger menu toggle
+    const hamburger = document.getElementById('hamburger');
+    const navMenu = document.getElementById('nav-menu');
+    
+    if (hamburger && navMenu) {
+      hamburger.addEventListener('click', () => {
+        hamburger.classList.toggle('active');
+        navMenu.classList.toggle('active');
+      });
+
+      // Close menu when clicking on a link
+      document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+          hamburger.classList.remove('active');
+          navMenu.classList.remove('active');
+        });
+      });
+
+      // Close menu when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!hamburger.contains(e.target) && !navMenu.contains(e.target)) {
+          hamburger.classList.remove('active');
+          navMenu.classList.remove('active');
+        }
+      });
+    }
   </script>
 </body>
 </html>
