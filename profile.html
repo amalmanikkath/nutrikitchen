@@ -166,6 +166,66 @@
       height: 45px;
     }
 
+    /* Hamburger Menu Styles */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      z-index: 1001;
+    }
+
+    .hamburger span {
+      width: 25px;
+      height: 3px;
+      background-color: var(--primary-green);
+      margin: 3px 0;
+      transition: all 0.3s ease;
+      border-radius: 3px;
+    }
+
+    .hamburger.active span:nth-child(1) {
+      transform: rotate(45deg) translate(8px, 8px);
+    }
+
+    .hamburger.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .hamburger.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(7px, -7px);
+    }
+
+    @media (max-width: 768px) {
+      .hamburger {
+        display: flex;
+      }
+
+      .nav-menu {
+        position: fixed;
+        left: -100%;
+        top: 70px;
+        flex-direction: column;
+        background-color: white;
+        width: 100%;
+        text-align: center;
+        transition: left 0.3s ease;
+        box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
+        padding: 20px 0;
+        z-index: 1000;
+      }
+
+      .nav-menu.active {
+        left: 0;
+      }
+
+      .nav-menu li {
+        margin: 15px 0;
+      }
+    }
+
     .form-input {
       width: 100%;
       padding: 10px;
