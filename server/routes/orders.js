@@ -337,14 +337,22 @@ router.post('/verify', async (req, res) => {
 // Get User's Past Orders
 router.get('/past-orders', authenticate, async (req, res) => {
   try {
+    console.log(`[ORDERS] Fetching past orders for user: ${req.userId}`);
+    
     const orders = await prisma.order.findMany({
-      where: { userId: req.userId, status: 'PAID' },
+      where: { 
+        userId: String(req.userId), 
+        status: 'PAID' 
+      },
       include: { orderItems: true },
       orderBy: { createdAt: 'desc' }
     });
+    
+    console.log(`[ORDERS] Found ${orders.length} orders for user ${req.userId}`);
     res.json(orders);
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching past orders', error });
+    console.error('[ORDERS] Error fetching past orders:', error);
+    res.status(500).json({ message: 'Error fetching past orders', error: error.message });
   }
 });
 
