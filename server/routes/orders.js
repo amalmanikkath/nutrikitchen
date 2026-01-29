@@ -150,13 +150,17 @@ router.post('/verify', async (req, res) => {
         console.log(`✅ PDF Invoice generated at: ${pdfPath}`);
       } catch (pdfError) {
         console.error('❌ PDF Generation FAILED:', pdfError);
+        console.error('PDF Error Stack:', pdfError.stack);
       }
 
       // 4. Send Confirmation Email to Customer
       if (fullOrder && (fullOrder.customerEmail || (fullOrder.user && fullOrder.user.email))) {
+        const customerEmail = fullOrder.customerEmail || fullOrder.user.email;
+        console.log(`[EMAIL] Preparing customer confirmation email to: ${customerEmail}`);
+        
         const mailOptions = {
           from: `"Nutri Kitchen" <${process.env.EMAIL_USER}>`,
-          to: fullOrder.customerEmail || fullOrder.user.email,
+          to: customerEmail,
           subject: `Tax Invoice - #${fullOrder.razorpayOrderId}`,
           attachments: [
             {
@@ -234,7 +238,7 @@ router.post('/verify', async (req, res) => {
 
               <div style="text-align: center; color: #888; font-size: 12px;">
                 <p>Thank you for choosing Nutri Kitchen!</p>
-                <p>Visit us at <a href="http://nutrikitchen.in" style="color: #4CAF50; text-decoration: none;">www.nutrikitchen.in</a></p>
+                <p>Visit us at <a href="https://nutrikitchen.in" style="color: #4CAF50; text-decoration: none;">www.nutrikitchen.in</a></p>
               </div>
             </div>
           `
@@ -242,21 +246,29 @@ router.post('/verify', async (req, res) => {
 
         // Attach PDF to email if it was successfully generated
         if (pdfPath) {
+          console.log(`[EMAIL] Attaching PDF invoice: ${pdfPath}`);
           mailOptions.attachments.push({
-            filename: `Invoice_${fullOrder.id}.pdf`,
+            filename: `Invoice_NUT${String(fullOrder.id).padStart(4, '0')}.pdf`,
             path: pdfPath
           });
+        } else {
+          console.warn(`[EMAIL] No PDF to attach - PDF generation may have failed`);
         }
 
         try {
+          console.log(`[EMAIL] Sending customer confirmation email...`);
           const info = await transporter.sendMail(mailOptions);
-          console.log(`✅ Confirmation email sent to ${fullOrder.customerEmail || fullOrder.user.email}: ${info.messageId}`);
+          console.log(`✅ Confirmation email sent to ${customerEmail}: ${info.messageId}`);
         } catch (emailError) {
           console.error('❌ Error sending confirmation email:', emailError);
+          console.error('Email Error Details:', emailError.message);
+          console.error('Email Error Stack:', emailError.stack);
         }
+      } else {
+        console.warn(`[EMAIL] No customer email found for order #${fullOrder.id}`);
       }
 
-      // 4. Send Admin Notification Email
+      // 5. Send Admin Notification Email
       const adminMailOptions = {
         from: `"Nutri Kitchen Orders" <${process.env.EMAIL_USER}>`,
         to: 'info@nutrikitchen.in',
@@ -281,6 +293,7 @@ router.post('/verify', async (req, res) => {
 
             <div style="background: #f9f9f9; padding: 15px; border-radius: 5px; margin: 20px 0;">
               <h3 style="margin-top: 0;">Order Summary</h3>
+              <p><strong>Invoice No:</strong> NUT${String(fullOrder.id).padStart(4, '0')}</p>
               <p><strong>Order ID:</strong> ${fullOrder.razorpayOrderId}</p>
               <p><strong>Payment ID:</strong> ${fullOrder.razorpayPaymentId}</p>
               <p><strong>Total Amount:</strong> ₹${fullOrder.totalAmount}</p>
@@ -292,7 +305,7 @@ router.post('/verify', async (req, res) => {
             </ul>
 
             <div style="margin-top: 30px; text-align: center;">
-              <a href="http://localhost:5000/admin/orders.html?view=order&id=${fullOrder.id}" style="background-color: #4CAF50; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">Manage Order in Dashboard</a>
+              <a href="https://nutrikitchen.in/admin/orders.html?view=order&id=${fullOrder.id}" style="background-color: #4CAF50; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">Manage Order in Dashboard</a>
             </div>
 
             <p style="font-size: 11px; color: #999; margin-top: 40px; text-align: center;">
@@ -303,11 +316,13 @@ router.post('/verify', async (req, res) => {
       };
 
       try {
-        console.log(`[MAIL] Dispatching Admin Alert for Order #${fullOrder.id}...`);
+        console.log(`[MAIL] Dispatching Admin Alert for Order #${fullOrder.id} to info@nutrikitchen.in...`);
         const info = await transporter.sendMail(adminMailOptions);
         console.log(`✅ Admin alert DISPATCHED. ID: ${info.messageId}`);
       } catch (adminEmailError) {
         console.error('❌ Admin Alert FAILED:', adminEmailError);
+        console.error('Admin Email Error Details:', adminEmailError.message);
+        console.error('Admin Email Error Stack:', adminEmailError.stack);
       }
 
       return res.json({ message: "Verification complete. Notifications sent." });
