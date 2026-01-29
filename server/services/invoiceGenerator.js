@@ -52,7 +52,7 @@ async function generateInvoicePDF(order) {
                .fontSize(9)
                .font('Helvetica')
                .text(`Date of Issue: ${new Date(order.createdAt).toLocaleDateString('en-IN')}`, 300, 75, { align: 'right', width: 250 })
-               .text(`Invoice Number: INV-${order.id}`, 300, 90, { align: 'right', width: 250 });
+               .text(`Invoice Number: NUT${String(order.id).padStart(4, '0')}`, 300, 90, { align: 'right', width: 250 });
 
             // --- INFORMATION GRID ---
             const infoY = 150;
@@ -81,11 +81,11 @@ async function generateInvoicePDF(order) {
             
             doc.fillColor(textColor)
                .font('Helvetica-Bold')
-               .text(order.customerName || order.user.name, 320, infoY + 20);
+                .text(order.customerName || order.user?.name || '', 320, infoY + 20);
             
             doc.font('Helvetica')
                .fillColor(lightTextColor)
-               .text(`Phone: ${order.customerPhone || order.user.phone || 'N/A'}`, 320, infoY + 35)
+                .text(`Phone: ${order.customerPhone || order.user?.phone || 'N/A'}`, 320, infoY + 35)
                .text(order.shippingAddress || '', 320, infoY + 50, { width: 230 })
                .text(`${order.city || ''}, ${order.state || ''} - ${order.pincode || ''}`, 320, doc.y);
 
@@ -164,15 +164,21 @@ async function generateInvoicePDF(order) {
             const footerY = 680;
             
             // Signatory area
+            // Add Authorized Signature Image
+            const signaturePath = path.join(__dirname, '../../images/authorisedSignature.png');
+            if (fs.existsSync(signaturePath)) {
+                // Adjust position to be above the text
+                doc.image(signaturePath, 410, footerY, { height: 40 });
+            }
+
             doc.rect(380, footerY + 40, 160, 0.5).fill(textColor);
             doc.fillColor(textColor).fontSize(9).font('Helvetica').text('Authorised Signatory', 380, footerY + 45, { align: 'center', width: 160 });
 
             // Terms
             doc.fillColor(primaryColor).fontSize(10).font('Helvetica-Bold').text('Terms & Conditions', 60, footerY);
             doc.fillColor(lightTextColor).fontSize(8.5).font('Helvetica')
-               .text('1. This is a computer-generated invoice, signature not required.', 60, footerY + 15)
-               .text('2. All disputes are subject to Palakkad jurisdiction.', 60, footerY + 30)
-               .text('3. Goods once sold cannot be returned or exchanged.', 60, footerY + 45);
+                .text('1. This is a computer-generated invoice.', 60, footerY + 15)
+                .text('2. Goods once sold cannot be returned or exchanged.', 60, footerY + 30);
 
             // Bottom Ribbon
             doc.rect(30, 780, 565.27, 61.89).fill(secondaryColor);

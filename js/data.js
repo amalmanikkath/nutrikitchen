@@ -49,7 +49,7 @@ const PRODUCTS = [
     id: 3,
     name: 'Jaggery Powder',
     category: 'Natural Sweeteners',
-    price: 165,
+    price: 3,
     originalPrice: 249,
     description: 'Pure, unrefined jaggery made from premium sugarcane. A healthy alternative to white sugar, rich in minerals and antioxidants.',
     features: [

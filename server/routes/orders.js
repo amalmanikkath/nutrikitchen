@@ -173,7 +173,7 @@ router.post('/verify', async (req, res) => {
                 </div>
                 <div style="text-align: left; margin-top: 20px;">
                   <h2 style="color: #4CAF50; margin: 0; font-size: 20px;">TAX INVOICE / BILL OF SUPPLY</h2>
-                  <p style="margin: 5px 0;"><strong>Invoice No:</strong> INV-${fullOrder.id}</p>
+                  <p style="margin: 5px 0;"><strong>Invoice No:</strong> NUT${String(fullOrder.id).padStart(4, '0')}</p>
                   <p style="margin: 5px 0;"><strong>Date:</strong> ${new Date(fullOrder.createdAt).toLocaleDateString()}</p>
                 </div>
               </div>
@@ -188,10 +188,10 @@ router.post('/verify', async (req, res) => {
                 </div>
                 <div style="flex: 1; min-width: 250px; background: #f9f9f9; padding: 15px; border-radius: 5px;">
                   <h4 style="margin-top: 0; color: #4CAF50; border-bottom: 1px solid #ddd; padding-bottom: 5px;">Billed To (To):</h4>
-                  <p style="margin: 5px 0;"><strong>${fullOrder.customerName || fullOrder.user.name}</strong></p>
-                  <p style="margin: 5px 0;">${fullOrder.customerPhone || fullOrder.user.phone || ''}</p>
-                  <p style="margin: 5px 0;">${fullOrder.shippingAddress}</p>
-                  <p style="margin: 5px 0;">${fullOrder.city}, ${fullOrder.state} - ${fullOrder.pincode}</p>
+                  <p style="margin: 5px 0;"><strong>${fullOrder.customerName || fullOrder.user?.name || ''}</strong></p>
+                  <p style="margin: 5px 0;">${fullOrder.customerPhone || fullOrder.user?.phone || ''}</p>
+                  <p style="margin: 5px 0;">${fullOrder.shippingAddress || ''}</p>
+                  <p style="margin: 5px 0;">${fullOrder.city || ''}, ${fullOrder.state || ''} - ${fullOrder.pincode || ''}</p>
                 </div>
               </div>
 

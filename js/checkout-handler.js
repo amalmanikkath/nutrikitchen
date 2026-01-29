@@ -8,6 +8,48 @@ var API_URL = (window.location.protocol === 'https:')
   ? 'https://nutrikitchen.vercel.app/api'
   : (window.API_URL || '/api');
 
+// Show loading overlay
+function showLoadingOverlay(message = 'Processing your order...') {
+  const overlay = document.createElement('div');
+  overlay.id = 'checkout-loading-overlay';
+  overlay.innerHTML = `
+    <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 9999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px);">
+      <div style="background: white; padding: 40px 60px; border-radius: 16px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.3); max-width: 500px; animation: fadeInScale 0.3s ease-out;">
+        <div style="width: 60px; height: 60px; border: 4px solid #f3f3f3; border-top: 4px solid #4CAF50; border-radius: 50%; margin: 0 auto 20px; animation: spin 1s linear infinite;"></div>
+        <h3 style="color: #333; margin-bottom: 10px; font-size: 1.5rem;">${message}</h3>
+        <p style="color: #666; font-size: 0.95rem;">Please wait while we confirm your payment...</p>
+      </div>
+    </div>
+    <style>
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      @keyframes fadeInScale {
+        from {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+    </style>
+  `;
+  document.body.appendChild(overlay);
+}
+
+// Hide loading overlay
+function hideLoadingOverlay() {
+  const overlay = document.getElementById('checkout-loading-overlay');
+  if (overlay) {
+    overlay.style.opacity = '0';
+    overlay.style.transition = 'opacity 0.3s ease-out';
+    setTimeout(() => overlay.remove(), 300);
+  }
+}
+
 // Process checkout
 async function processCheckout(event) {
   event.preventDefault();
@@ -42,6 +84,9 @@ async function processCheckout(event) {
     return false;
   }
   
+  // Show loading overlay
+  showLoadingOverlay('Creating your order...');
+  
   try {
     // 1. Create Order in Backend
     const orderResponse = await fetch(`${API_URL}/orders/create`, {
@@ -57,25 +102,43 @@ async function processCheckout(event) {
           name: item.product.name,
           quantity: item.quantity,
           price: item.product.price
-        }))
+        })),
+        shippingDetails: {
+          fullName: formData.get('fullName'),
+          email: formData.get('email'),
+          phone: formData.get('phone'),
+          address: formData.get('address'),
+          city: formData.get('city'),
+          state: formData.get('state'),
+          pincode: formData.get('pincode')
+        }
       })
     });
 
     const orderData = await orderResponse.json();
 
     if (!orderResponse.ok) {
+      hideLoadingOverlay();
       throw new Error(orderData.message || 'Failed to create order');
     }
 
+    // Update loading message
+    hideLoadingOverlay();
+    showLoadingOverlay('Opening payment gateway...');
+
     // 2. Open Razorpay Checkout
     const options = {
-      key: "rzp_test_S06u0b22upn9G9", // Test Razorpay Key ID
+      key: "rzp_live_S66SCmE0sBs0xF", // Live Razorpay Key ID
       amount: orderData.amount,
       currency: "INR",
       name: "Nutri Kitchen",
       description: "Organic Millet Products",
       order_id: orderData.orderId,
       handler: async function (response) {
+        // Update loading message for verification
+        hideLoadingOverlay();
+        showLoadingOverlay('Verifying your payment...');
+        
         // 3. Verify Payment
         const verifyResponse = await fetch(`${API_URL}/orders/verify`, {
           method: 'POST',
@@ -90,9 +153,18 @@ async function processCheckout(event) {
         const verifyData = await verifyResponse.json();
 
         if (verifyResponse.ok) {
-          showSuccessMessage(orderData.orderId, formData);
-          window.cart.clearCart();
+          // Update loading message for final step
+          hideLoadingOverlay();
+          showLoadingOverlay('Sending confirmation email...');
+          
+          // Small delay to show the message
+          setTimeout(() => {
+            hideLoadingOverlay();
+            showSuccessMessage(orderData.orderId, formData);
+            window.cart.clearCart();
+          }, 1500);
         } else {
+          hideLoadingOverlay();
           showAlert('Payment verification failed: ' + verifyData.message, 'error');
         }
       },
@@ -103,17 +175,28 @@ async function processCheckout(event) {
       },
       theme: {
         color: "#4CAF50"
+      },
+      modal: {
+        ondismiss: function() {
+          hideLoadingOverlay();
+        }
       }
     };
 
     const rzp = new Razorpay(options);
+    
     rzp.on('payment.failed', function (response){
+      hideLoadingOverlay();
       showAlert("Payment Failed: " + response.error.description, 'error');
     });
+    
+    // Hide loading before opening Razorpay
+    hideLoadingOverlay();
     rzp.open();
 
   } catch (error) {
     console.error('Checkout error:', error);
+    hideLoadingOverlay();
     showAlert('Checkout error: ' + error.message, 'error');
   }
   
@@ -126,29 +209,36 @@ function showSuccessMessage(orderId, formData) {
   const email = formData.get('email');
   
   const successHTML = `
-    <div style="text-align: center; padding: var(--space-3xl);">
-      <div style="font-size: 5rem; margin-bottom: var(--space-lg);">✅</div>
-      <h2 style="color: var(--success); margin-bottom: var(--space-md);">Order Placed Successfully!</h2>
-      <p style="font-size: var(--text-lg); margin-bottom: var(--space-lg);">
-        Thank you, <strong>${customerName}</strong>!<br>
-        Your order <strong>#${orderId}</strong> has been confirmed.
-      </p>
-      <p style="margin-bottom: var(--space-xl);">
-        A confirmation email has been sent to <strong>${email}</strong>
-      </p>
-      <a href="profile.html" class="btn btn-primary btn-lg">View My Orders</a>
-      <a href="index.html" class="btn btn-outline btn-lg" style="margin-left: var(--space-md);">Go to Home</a>
+    <div style="display: flex; align-items: center; justify-content: center; min-height: 60vh;">
+      <div style="text-align: center; padding: var(--space-3xl); max-width: 800px; margin: 0 auto;">
+        <div style="font-size: 5rem; margin-bottom: var(--space-lg);">✅</div>
+        <h2 style="color: var(--success); margin-bottom: var(--space-md);">Order Placed Successfully!</h2>
+        <p style="font-size: var(--text-lg); margin-bottom: var(--space-lg);">
+          Thank you, <strong>${customerName}</strong>!<br>
+          Your order <strong>#${orderId}</strong> has been confirmed.
+        </p>
+        <p style="margin-bottom: var(--space-xl);">
+          A confirmation email has been sent to <strong>${email}</strong>
+        </p>
+        <div style="display: flex; gap: var(--space-md); justify-content: center; flex-wrap: wrap;">
+          <a href="profile.html" class="btn btn-primary btn-lg">View My Orders</a>
+          <a href="index.html" class="btn btn-outline btn-lg">Go to Home</a>
+        </div>
+      </div>
     </div>
   `;
   
   const container = document.querySelector('.checkout-container');
   if (container) {
     container.innerHTML = successHTML;
+    container.style.display = 'flex';
+    container.style.justifyContent = 'center';
+    container.style.alignItems = 'center';
   }
   
-  // Hide checkout header/banner
-  const header = document.querySelector('.checkout-header');
-  if (header) header.style.display = 'none';
+  // Keep checkout header/banner visible - don't hide it
+  // const header = document.querySelector('.checkout-header');
+  // if (header) header.style.display = 'none';
 
   // Scroll to top
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -239,22 +329,6 @@ window.updateCheckoutSummary = function updateCheckoutSummary() {
     items.forEach((item, idx) => {
        console.log(`Item ${idx}: ${item.product.name}, Price=${item.product.price}, Qty=${item.quantity}, Sub=${item.product.price * item.quantity}`);
     });
-
-    // Create a floating debug element for verification (Bottom-Right for better visibility)
-    let debugEl = document.getElementById('checkout-debug-overlay');
-    if (!debugEl) {
-      debugEl = document.createElement('div');
-      debugEl.id = 'checkout-debug-overlay';
-      debugEl.style.cssText = 'position:fixed; bottom:20px; right:20px; background:rgba(220,53,69,0.9); color:white; padding:15px; z-index:10002; font-family:monospace; font-size:14px; border-radius:8px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); border:2px solid white;';
-      document.body.appendChild(debugEl);
-    }
-    debugEl.innerHTML = `
-      <div style="font-weight:bold; border-bottom:1px solid rgba(255,255,255,0.3); margin-bottom:5px;">DEBUG CART DATA</div>
-      Items: ${items.length}<br>
-      Sub: ${currency}${subtotal}<br>
-      Total: ${currency}${total}<br>
-      Time: ${new Date().toLocaleTimeString()}
-    `;
 
     if (subtotalEl) {
       const formattedSubtotal = `${currency}${Math.round(subtotal)}`;

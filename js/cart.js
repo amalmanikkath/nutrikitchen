@@ -33,7 +33,25 @@ class ShoppingCart {
     const savedCart = localStorage.getItem('nutriKitchenCart');
     if (savedCart) {
       try {
-        this.items = JSON.parse(savedCart);
+        const loadedItems = JSON.parse(savedCart);
+
+        // Sync with latest product data (prices, etc)
+        if (typeof window.PRODUCTS !== 'undefined' && Array.isArray(window.PRODUCTS)) {
+          this.items = loadedItems.map(item => {
+            const freshProduct = window.PRODUCTS.find(p => p.id === item.product.id);
+            if (freshProduct) {
+              // Update product data but keep quantity
+              return { ...item, product: freshProduct };
+            }
+            return item;
+          });
+          console.log('Cart items synced with latest product data');
+          // Save back to storage to persist updates
+          localStorage.setItem('nutriKitchenCart', JSON.stringify(this.items));
+        } else {
+          this.items = loadedItems;
+        }
+
         console.log('Cart items loaded from storage:', this.items.length);
       } catch (e) {
         console.error('Error parsing cart from storage:', e);
