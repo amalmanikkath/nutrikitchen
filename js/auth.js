@@ -180,28 +180,12 @@ class Auth {
             cityInput.dispatchEvent(new Event('input', { bubbles: true }));
           }
           
-          // Auto-fill State
-          const stateSelect = document.getElementById('state');
-          if (stateSelect) {
-            const apiState = details.State;
-            // Try to match API state with select options
-            let matched = false;
-            for(let i=0; i<stateSelect.options.length; i++) {
-              if (stateSelect.options[i].value.toLowerCase() === apiState.toLowerCase()) {
-                stateSelect.selectedIndex = i;
-                matched = true;
-                break;
-              }
-            }
-            // If direct match fails, handle specific cases or set to Others
-            if (!matched) {
-              if (apiState === 'Odisha') {
-                // If distinct naming needed
-              }
-              // Select 'Others' or keep as is if not found
-            }
-            // Manually trigger change event to clear validation errors
-            stateSelect.dispatchEvent(new Event('change', { bubbles: true }));
+          // Auto-fill State (now a text input, not select)
+          const stateInput = document.getElementById('state');
+          if (stateInput) {
+            stateInput.value = details.State;
+            // Manually trigger input event to clear validation errors
+            stateInput.dispatchEvent(new Event('input', { bubbles: true }));
           }
         }
       } catch (error) {
