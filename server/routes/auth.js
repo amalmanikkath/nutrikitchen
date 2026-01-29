@@ -491,4 +491,163 @@ router.post('/profile/update', async (req, res) => {
   }
 });
 
+// Forgot Password - Send OTP
+router.post('/forgot-password', async (req, res) => {
+  try {
+    const { email } = req.body;
+    
+    if (!email) {
+      return res.status(400).json({ message: 'Email is required' });
+    }
+
+    // Check if user exists
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      return res.status(404).json({ message: 'No account found with this email address' });
+    }
+
+    // Generate OTP
+    const otp = generateOtp();
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+    
+    // Delete any existing OTP for this email
+    await prisma.otp.deleteMany({ where: { email } });
+    
+    // Store OTP in database
+    await prisma.otp.create({
+      data: {
+        email,
+        phone: null,
+        otp,
+        expiresAt
+      }
+    });
+
+    // Send OTP via email
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: 'Nutri Kitchen - Password Reset Code',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #4CAF50;">Password Reset Request</h2>
+          <p>Hi ${user.name},</p>
+          <p>We received a request to reset your password. Your verification code is:</p>
+          <div style="background-color: #f5f5f5; padding: 20px; text-align: center; margin: 20px 0;">
+            <h1 style="color: #4CAF50; letter-spacing: 5px; margin: 0;">${otp}</h1>
+          </div>
+          <p>This code will expire in 10 minutes.</p>
+          <p>If you didn't request a password reset, please ignore this email or contact support if you have concerns.</p>
+          <br>
+          <p>Best regards,<br>Nutri Kitchen Team</p>
+        </div>
+      `
+    };
+    
+    try {
+      await transporter.sendMail(mailOptions);
+      console.log(`✅ Password reset OTP sent to ${email}: ${otp}`);
+      res.json({ message: 'Verification code sent to your email' });
+    } catch (emailError) {
+      console.error('Email error:', emailError.message);
+      console.log('\n' + '='.repeat(60));
+      console.log('📧 PASSWORD RESET EMAIL FAILED - DEVELOPMENT MODE');
+      console.log('='.repeat(60));
+      console.log(`📧 Email: ${email}`);
+      console.log(`🔑 OTP: ${otp}`);
+      console.log('='.repeat(60) + '\n');
+      res.json({ message: 'Verification code generated (check server logs)' });
+    }
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    res.status(500).json({ message: 'Error processing request', error: error.message });
+  }
+});
+
+// Verify Reset OTP
+router.post('/verify-reset-otp', async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    
+    if (!email || !otp) {
+      return res.status(400).json({ message: 'Email and OTP are required' });
+    }
+
+    // Find OTP record
+    const otpRecord = await prisma.otp.findFirst({
+      where: { email }
+    });
+    
+    if (!otpRecord) {
+      return res.status(400).json({ message: 'OTP not found. Please request a new code.' });
+    }
+    
+    // Check if OTP has expired
+    if (new Date() > otpRecord.expiresAt) {
+      await prisma.otp.deleteMany({ where: { email } });
+      return res.status(400).json({ message: 'OTP has expired. Please request a new code.' });
+    }
+    
+    // Verify OTP
+    if (otpRecord.otp !== otp) {
+      return res.status(400).json({ message: 'Invalid verification code. Please try again.' });
+    }
+
+    // Generate a temporary reset token
+    const resetToken = jwt.sign({ email, purpose: 'password-reset' }, process.env.JWT_SECRET, { expiresIn: '15m' });
+    
+    res.json({ 
+      message: 'Verification successful',
+      resetToken 
+    });
+  } catch (error) {
+    console.error('Verify reset OTP error:', error);
+    res.status(500).json({ message: 'Error verifying code', error: error.message });
+  }
+});
+
+// Reset Password
+router.post('/reset-password', async (req, res) => {
+  try {
+    const { email, resetToken, newPassword } = req.body;
+    
+    if (!email || !resetToken || !newPassword) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    // Verify reset token
+    try {
+      const decoded = jwt.verify(resetToken, process.env.JWT_SECRET);
+      if (decoded.email !== email || decoded.purpose !== 'password-reset') {
+        return res.status(400).json({ message: 'Invalid reset token' });
+      }
+    } catch (err) {
+      return res.status(400).json({ message: 'Reset token expired or invalid' });
+    }
+
+    // Check if user exists
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    
+    // Update password
+    await prisma.user.update({
+      where: { email },
+      data: { password: hashedPassword }
+    });
+
+    // Delete OTP record
+    await prisma.otp.deleteMany({ where: { email } });
+
+    res.json({ message: 'Password reset successful' });
+  } catch (error) {
+    console.error('Reset password error:', error);
+    res.status(500).json({ message: 'Error resetting password', error: error.message });
+  }
+});
+
 module.exports = router;

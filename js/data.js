@@ -29,7 +29,7 @@ const PRODUCTS = [
     id: 2,
     name: 'Health Mix',
     category: 'Health Foods',
-    price: 299,
+    price: 247,
     originalPrice: 389,
     description: 'Complete health supplement packed with multi-grains, nuts, and seeds. Perfect for all age groups looking for natural nutrition.',
     features: [
@@ -49,7 +49,7 @@ const PRODUCTS = [
     id: 3,
     name: 'Jaggery Powder',
     category: 'Natural Sweeteners',
-    price: 3,
+    price: 119,
     originalPrice: 249,
     description: 'Pure, unrefined jaggery made from premium sugarcane. A healthy alternative to white sugar, rich in minerals and antioxidants.',
     features: [
@@ -69,7 +69,7 @@ const PRODUCTS = [
     id: 4,
     name: 'Protein Mix',
     category: 'Protein Foods',
-    price: 295,
+    price: 255,
     originalPrice: 395,
     description: 'High-protein blend combining millets, pulses, and nuts. Ideal for fitness enthusiasts and those seeking plant-based protein.',
     features: [
