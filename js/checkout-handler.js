@@ -4,9 +4,9 @@
 
 console.log('--- checkout.js file loaded ---');
 
-var API_URL = (window.location.protocol === 'https:')
-  ? 'https://nutrikitchen.vercel.app/api'
-  : (window.API_URL || '/api');
+var API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? 'http://localhost:5000/api'
+  : '/api'; // Use relative path for production
 
 // Show loading overlay
 function showLoadingOverlay(message = 'Processing your order...') {
