@@ -52,12 +52,13 @@ router.get('/users', authenticate, async (req, res) => {
         id: true,
         name: true,
         email: true,
-        createdAt: true,
+        phone: true,
         address: true,
         city: true,
         state: true,
         pincode: true,
-        phone: true,
+        isVerified: true,
+        createdAt: true,
         orders: {
           select: {
             id: true,

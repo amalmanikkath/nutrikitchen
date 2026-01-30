@@ -250,6 +250,73 @@ router.post('/verify-otp', async (req, res) => {
     if (email) await prisma.otp.deleteMany({ where: { email } });
     if (phone) await prisma.otp.deleteMany({ where: { phone } });
     
+    // Send notification email to admin about new user registration
+    try {
+      const adminNotificationEmail = {
+        from: `"Nutri Kitchen" <${process.env.EMAIL_USER}>`,
+        to: 'connectnutrikitchen@gmail.com',
+        subject: `New User Registration - ${name}`,
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+            <h2 style="color: #4CAF50; text-align: center;">New User Registered!</h2>
+            <p>A new user has registered on Nutri Kitchen.</p>
+            
+            <div style="background: #f9f9f9; padding: 20px; border-radius: 5px; margin: 20px 0;">
+              <h3 style="margin-top: 0; color: #2b6555;">User Details</h3>
+              <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                  <td style="padding: 8px 0; font-weight: bold; color: #666;">Name:</td>
+                  <td style="padding: 8px 0;">${name}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px 0; font-weight: bold; color: #666;">Email:</td>
+                  <td style="padding: 8px 0;">${email}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px 0; font-weight: bold; color: #666;">Phone:</td>
+                  <td style="padding: 8px 0;"><strong style="color: #4CAF50;">${phone}</strong></td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px 0; font-weight: bold; color: #666;">Address:</td>
+                  <td style="padding: 8px 0;">${address || 'Not provided'}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px 0; font-weight: bold; color: #666;">City:</td>
+                  <td style="padding: 8px 0;">${city || 'Not provided'}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px 0; font-weight: bold; color: #666;">State:</td>
+                  <td style="padding: 8px 0;">${state || 'Not provided'}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px 0; font-weight: bold; color: #666;">Pincode:</td>
+                  <td style="padding: 8px 0;">${pincode || 'Not provided'}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 8px 0; font-weight: bold; color: #666;">Registration Date:</td>
+                  <td style="padding: 8px 0;">${new Date().toLocaleString('en-IN')}</td>
+                </tr>
+              </table>
+            </div>
+
+            <div style="background: #fff8e1; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0;">
+              <p style="margin: 0; font-size: 14px;"><strong>Action Required:</strong> You may want to reach out to this customer via phone or email to welcome them and offer assistance.</p>
+            </div>
+
+            <p style="font-size: 12px; color: #999; text-align: center; margin-top: 30px;">
+              This is an automated notification from Nutri Kitchen.
+            </p>
+          </div>
+        `
+      };
+
+      await transporter.sendMail(adminNotificationEmail);
+      console.log(`✅ Admin notification sent for new user: ${name} (${phone})`);
+    } catch (emailError) {
+      console.error('❌ Failed to send admin notification email:', emailError);
+      // Don't fail the registration if email fails
+    }
+    
     // Generate JWT token
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET);
     
