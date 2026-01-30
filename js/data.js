@@ -111,7 +111,7 @@ const PRODUCTS = [
     id: 6,
     name: 'Vanilla Health Mix',
     category: 'Health Foods',
-    price: 379,
+    price: 289,
     originalPrice: 449,
     description: 'A delicious twist on our classic health mix with natural vanilla and chocolate flavors. Kids love the taste, moms love the nutrition.',
     features: [
@@ -131,7 +131,7 @@ const PRODUCTS = [
     id: 7,
     name: 'Chocolate Health Mix',
     category: 'Health Foods',
-    price: 389,
+    price: 299,
     originalPrice: 449,
     description: 'Rich chocolate flavor combined with the goodness of multi-grains. A perfect healthy treat for chocolate lovers.',
     features: [

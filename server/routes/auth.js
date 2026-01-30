@@ -159,11 +159,11 @@ router.post('/send-otp', async (req, res) => {
     // Construct final message
     let message = '';
     if (sentTo === 'both') {
-        message = 'OTP sent successfully to both Email and Phone';
+        message = 'OTP sent successfully to Email';
     } else if (sentTo === 'phone') {
         message = 'OTP sent successfully to Phone';
     } else if (sentTo === 'email') {
-        message = 'OTP sent successfully to Email (SMS failed, see logs)';
+        message = 'OTP sent successfully to Email';
     } else if (sentTo.includes('logged')) {
         message = `OTP generated! Check server logs for code (${sentTo})`;
     } else {
