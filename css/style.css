@@ -540,7 +540,7 @@ img {
   border: 1px solid var(--light-gray);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  transition: all var(--transition-base);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   position: relative;
   display: flex;
@@ -570,12 +570,13 @@ img {
   height: 100%;
   object-fit: contain;
   padding: var(--space-lg);
-  transition: transform var(--transition-base);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   border-radius: 12px;
+  will-change: transform;
 }
 
 .product-card:hover .product-image {
-  transform: scale(1.05);
+  transform: scale(1.08);
 }
 
 .product-info {
