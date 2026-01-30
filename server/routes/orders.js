@@ -7,6 +7,7 @@ const nodemailer = require('nodemailer');
 const fs = require('fs');
 const path = require('path');
 const { generateInvoicePDF } = require('../services/invoiceGenerator');
+const { generateShippingLabel } = require('../services/shippingLabelGenerator');
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -295,11 +296,31 @@ router.post('/verify', async (req, res) => {
         console.warn(`[EMAIL] No customer email found for order #${fullOrder.id}`);
       }
 
-      // 5. Send Admin Notification Email
+      // 5. Generate Shipping Label for Admin
+      let shippingLabelBuffer = null;
+      try {
+        console.log(`[SHIPPING] Generating shipping label for order #${fullOrder.id}...`);
+        shippingLabelBuffer = await generateShippingLabel(fullOrder);
+        
+        if (shippingLabelBuffer && shippingLabelBuffer.length > 0) {
+          console.log(`✅ Shipping label generated successfully`);
+          console.log(`✅ Shipping label size: ${(shippingLabelBuffer.length / 1024).toFixed(2)} KB`);
+        } else {
+          console.error('❌ Shipping label buffer is empty');
+          shippingLabelBuffer = null;
+        }
+      } catch (labelError) {
+        console.error('❌ Shipping Label Generation FAILED:', labelError);
+        console.error('Label Error Stack:', labelError.stack);
+        shippingLabelBuffer = null;
+      }
+
+      // 6. Send Admin Notification Email with Shipping Label
       const adminMailOptions = {
         from: `"Nutri Kitchen Orders" <${process.env.EMAIL_USER}>`,
-        to: 'info@nutrikitchen.in',
+        to: 'connectnutrikitchen@gmail.com',
         subject: `NEW ORDER ALERT: #${fullOrder.razorpayOrderId} - ₹${fullOrder.totalAmount}`,
+        attachments: [],
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; padding: 20px; border-radius: 10px;">
             <h2 style="color: #4CAF50; text-align: center;">New Order Received!</h2>
@@ -331,6 +352,11 @@ router.post('/verify', async (req, res) => {
               ${fullOrder.orderItems.map(item => `<li>${item.productName} - ${item.quantity} x ₹${item.price}</li>`).join('')}
             </ul>
 
+            <div style="background: #fff8e1; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0;">
+              <p style="margin: 0;"><strong>📦 Shipping Label Attached</strong></p>
+              <p style="margin: 5px 0 0 0; font-size: 14px;">Print the attached shipping label (half A4 size) and stick it on the courier pouch.</p>
+            </div>
+
             <div style="margin-top: 30px; text-align: center;">
               <a href="https://nutrikitchen.in/admin/orders.html?view=order&id=${fullOrder.id}" style="background-color: #4CAF50; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">Manage Order in Dashboard</a>
             </div>
@@ -342,8 +368,21 @@ router.post('/verify', async (req, res) => {
         `
       };
 
+      // Attach shipping label if generated successfully
+      if (shippingLabelBuffer && shippingLabelBuffer.length > 0) {
+        console.log(`[EMAIL] Attaching shipping label to admin email`);
+        adminMailOptions.attachments.push({
+          filename: `Shipping_Label_Order_${fullOrder.id}.pdf`,
+          content: shippingLabelBuffer,
+          contentType: 'application/pdf'
+        });
+        console.log(`[EMAIL] Shipping label attached`);
+      } else {
+        console.warn(`[EMAIL] No shipping label to attach`);
+      }
+
       try {
-        console.log(`[MAIL] Dispatching Admin Alert for Order #${fullOrder.id} to info@nutrikitchen.in...`);
+        console.log(`[MAIL] Dispatching Admin Alert for Order #${fullOrder.id} to connectnutrikitchen@gmail.com...`);
         const info = await transporter.sendMail(adminMailOptions);
         console.log(`✅ Admin alert DISPATCHED. ID: ${info.messageId}`);
       } catch (adminEmailError) {
