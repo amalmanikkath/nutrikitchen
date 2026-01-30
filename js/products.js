@@ -41,7 +41,11 @@ function renderProducts(productsToShow) {
       <div class="product-info">
         <span class="product-category">${product.category}</span>
         <h3 class="product-name" itemprop="name">${product.name}</h3>
-        <p class="product-description" itemprop="description">${product.description.substring(0, 100)}...</p>
+        <p class="product-description" itemprop="description">
+          <span class="description-short">${product.description.substring(0, 100)}...</span>
+          <span class="description-full">${product.description}</span>
+          <span class="description-hover-tooltip">${product.description}</span>
+        </p>
         
         <div class="product-footer">
           <div class="product-price" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
@@ -187,4 +191,37 @@ if (typeof window !== 'undefined') {
   window.filterByCategory = filterByCategory;
   window.searchProducts = searchProducts;
   window.sortProducts = sortProducts;
+}
+
+// Show description overlay (desktop only)
+function showDescriptionOverlay(productName, description) {
+  // Check if mobile - if so, do nothing (CSS will handle showing full text)
+  if (window.innerWidth <= 768) return;
+  
+  // Create overlay
+  const overlay = document.createElement('div');
+  overlay.className = 'description-overlay';
+  overlay.innerHTML = `
+    <div class="description-overlay-content">
+      <h3>${productName}</h3>
+      <p>${description}</p>
+      <button class="btn btn-primary btn-sm" onclick="this.parentElement.parentElement.remove()">Close</button>
+    </div>
+  `;
+  
+  // Close on overlay click
+  overlay.addEventListener('click', function(e) {
+    if (e.target === overlay) {
+      overlay.remove();
+    }
+  });
+  
+  document.body.appendChild(overlay);
+  
+  // Trigger animation
+  setTimeout(() => overlay.classList.add('active'), 10);
+}
+
+if (typeof window !== 'undefined') {
+  window.showDescriptionOverlay = showDescriptionOverlay;
 }

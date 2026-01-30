@@ -18,12 +18,12 @@ const PRODUCTS = [
       'No Added Sugar or Salt'
     ],
     image: 'images/BabyMixPouch.png',
-    inStock: false,
-    isComingSoon: true,
+    inStock: true,
+    isComingSoon: false,
     weight: '250gm',
     rating: 4.8,
     reviews: 156,
-    amazonLink: '#' // Disabled for coming soon
+    amazonLink: 'https://www.amazon.in/l/27943762031?me=A3CVCYQ4VN2MYE&ref_=NSS_WELCOME_SHARESTOREFRONT'
   },
   {
     id: 2,
