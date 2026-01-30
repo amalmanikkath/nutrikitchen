@@ -125,6 +125,12 @@ router.get('/users/:userId', authenticate, async (req, res) => {
         id: true,
         name: true,
         email: true,
+        phone: true,
+        address: true,
+        city: true,
+        state: true,
+        pincode: true,
+        isVerified: true,
         createdAt: true,
         orders: {
           include: {
