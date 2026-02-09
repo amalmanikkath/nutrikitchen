@@ -160,7 +160,7 @@ const PRODUCTS = [
       'High in Fiber',
       'Traditional Taste'
     ],
-    image: 'images/doshPouch.png',
+    image: 'images/doshpouch.png',
     inStock: true,
     weight: '400gm',
     rating: 4.7,
