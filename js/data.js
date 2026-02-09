@@ -146,6 +146,46 @@ const PRODUCTS = [
     rating: 4.8,
     reviews: 92,
     amazonLink: 'https://www.amazon.in/Nutri-Chocolate-Multi-Millet-Nutrition-Ingredients/dp/B0G7JK3SKB/ref=lp_27943762031_1_4?pf_rd_p=9e034799-55e2-4ab2-b0d0-eb42f95b2d05&pf_rd_r=CH0ND5YYMCH1TFBTECJR&sbo=RZvfv%2F%2FHxDF%2BO5021pAnSA%3D%3D'
+  },
+  {
+    id: 8,
+    name: 'Millet Dosa Mix',
+    category: 'Traditional Foods',
+    price: 268,
+    originalPrice: 349,
+    description: 'Authentic South Indian dosa mix made from nutritious millets. Crispy, healthy, and easy to prepare traditional breakfast.',
+    features: [
+      'Multi-Millet Formula',
+      'Instant Dosa Mix',
+      'High in Fiber',
+      'Traditional Taste'
+    ],
+    image: 'images/doshPouch.png',
+    inStock: true,
+    weight: '400gm',
+    rating: 4.7,
+    reviews: 145,
+    amazonLink: 'https://www.amazon.in/l/27943762031?me=A3CVCYQ4VN2MYE&ref_=NSS_WELCOME_SHARESTOREFRONT'
+  },
+  {
+    id: 9,
+    name: 'Millet Puttu Podi',
+    category: 'Traditional Foods',
+    price: 268,
+    originalPrice: 349,
+    description: 'Traditional Kerala breakfast staple made with premium millets. Healthy, nutritious, and authentic puttu powder for your morning meal.',
+    features: [
+      'Premium Millet Blend',
+      'Authentic Kerala Recipe',
+      'Rich in Nutrients',
+      'Easy to Prepare'
+    ],
+    image: 'images/puttuPouch.jpg',
+    inStock: true,
+    weight: '400gm',
+    rating: 4.6,
+    reviews: 98,
+    amazonLink: 'https://www.amazon.in/l/27943762031?me=A3CVCYQ4VN2MYE&ref_=NSS_WELCOME_SHARESTOREFRONT'
   }
 ];
 

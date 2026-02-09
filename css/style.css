@@ -774,6 +774,16 @@ img {
   text-decoration: none !important;
 }
 
+.shipping-free-badge {
+  font-size: 0.75rem;
+  color: var(--success);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: -8px;
+}
+
 .product-footer .btn {
   width: 100%;
   border-radius: var(--radius-md);
