@@ -1,0 +1,40 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Nutri Kitchen",
+  "alternateName": "NutriKitchen",
+  "url": "https://www.nutrikitchen.in",
+  "logo": "https://www.nutrikitchen.in/images/nutrikitchenLogo.png",
+  "description": "Premium millet products and natural health foods. 100% natural ingredients, traditional recipes, and modern nutrition.",
+  "email": "connectnutrikitchen@gmail.com",
+  "telephone": "+91-7760268422",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Parakulam, P O, Kunissery",
+    "addressLocality": "Palakkad",
+    "addressRegion": "Kerala",
+    "postalCode": "678681",
+    "addressCountry": "IN"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": "10.7905",
+    "longitude": "76.2144"
+  },
+  "sameAs": [
+    "https://www.instagram.com/nutrikitchen_in",
+    "https://www.amazon.in/l/27943762031?me=A3CVCYQ4VN2MYE"
+  ],
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+91-7760268422",
+    "contactType": "Customer Service",
+    "email": "connectnutrikitchen@gmail.com",
+    "availableLanguage": ["English", "Hindi"]
+  },
+  "founder": {
+    "@type": "Organization",
+    "name": "SMS AGRO",
+    "taxID": "32AFKFS2051L1ZX"
+  }
+}

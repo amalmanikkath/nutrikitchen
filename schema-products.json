@@ -1,0 +1,273 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Product",
+      "@id": "https://www.nutrikitchen.in/products.html#baby-mix",
+      "name": "Baby Mix",
+      "description": "Nutritious blend specially formulated for infants. Rich in essential vitamins, minerals, and protein from premium millets and grains.",
+      "image": "https://www.nutrikitchen.in/images/BabyMixPouch.png",
+      "brand": {
+        "@type": "Brand",
+        "name": "Nutri Kitchen"
+      },
+      "offers": {
+        "@type": "Offer",
+        "url": "https://www.nutrikitchen.in/products.html",
+        "priceCurrency": "INR",
+        "price": "289",
+        "priceValidUntil": "2026-12-31",
+        "availability": "https://schema.org/InStock",
+        "itemCondition": "https://schema.org/NewCondition",
+        "shippingDetails": {
+          "@type": "OfferShippingDetails",
+          "shippingRate": {
+            "@type": "MonetaryAmount",
+            "value": "0",
+            "currency": "INR"
+          },
+          "deliveryTime": {
+            "@type": "ShippingDeliveryTime",
+            "businessDays": {
+              "@type": "OpeningHoursSpecification",
+              "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+            },
+            "cutoffTime": "18:00:00",
+            "handlingTime": {
+              "@type": "QuantitativeValue",
+              "minValue": 1,
+              "maxValue": 2,
+              "unitCode": "DAY"
+            },
+            "transitTime": {
+              "@type": "QuantitativeValue",
+              "minValue": 3,
+              "maxValue": 7,
+              "unitCode": "DAY"
+            }
+          }
+        }
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "reviewCount": "156"
+      },
+      "weight": {
+        "@type": "QuantitativeValue",
+        "value": "250",
+        "unitCode": "GRM"
+      }
+    },
+    {
+      "@type": "Product",
+      "@id": "https://www.nutrikitchen.in/products.html#health-mix",
+      "name": "Health Mix",
+      "description": "Complete health supplement packed with multi-grains, nuts, and seeds. Perfect for all age groups looking for natural nutrition.",
+      "image": "https://www.nutrikitchen.in/images/healthMixpouch02.png",
+      "brand": {
+        "@type": "Brand",
+        "name": "Nutri Kitchen"
+      },
+      "offers": {
+        "@type": "Offer",
+        "url": "https://www.nutrikitchen.in/products.html",
+        "priceCurrency": "INR",
+        "price": "247",
+        "priceValidUntil": "2026-12-31",
+        "availability": "https://schema.org/InStock",
+        "itemCondition": "https://schema.org/NewCondition"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "reviewCount": "243"
+      },
+      "weight": {
+        "@type": "QuantitativeValue",
+        "value": "400",
+        "unitCode": "GRM"
+      }
+    },
+    {
+      "@type": "Product",
+      "@id": "https://www.nutrikitchen.in/products.html#jaggery-powder",
+      "name": "Jaggery Powder",
+      "description": "Pure, unrefined jaggery made from premium sugarcane. A healthy alternative to white sugar, rich in minerals and antioxidants.",
+      "image": "https://www.nutrikitchen.in/images/jaggeryPouch.png",
+      "brand": {
+        "@type": "Brand",
+        "name": "Nutri Kitchen"
+      },
+      "offers": {
+        "@type": "Offer",
+        "url": "https://www.nutrikitchen.in/products.html",
+        "priceCurrency": "INR",
+        "price": "125",
+        "priceValidUntil": "2026-12-31",
+        "availability": "https://schema.org/InStock",
+        "itemCondition": "https://schema.org/NewCondition"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.7",
+        "reviewCount": "189"
+      },
+      "weight": {
+        "@type": "QuantitativeValue",
+        "value": "500",
+        "unitCode": "GRM"
+      }
+    },
+    {
+      "@type": "Product",
+      "@id": "https://www.nutrikitchen.in/products.html#protein-mix",
+      "name": "Protein Mix",
+      "description": "High-protein blend combining millets, pulses, and nuts. Ideal for fitness enthusiasts and those seeking plant-based protein.",
+      "image": "https://www.nutrikitchen.in/images/nutriprotienMixPouch.png",
+      "brand": {
+        "@type": "Brand",
+        "name": "Nutri Kitchen"
+      },
+      "offers": {
+        "@type": "Offer",
+        "url": "https://www.nutrikitchen.in/products.html",
+        "priceCurrency": "INR",
+        "price": "255",
+        "priceValidUntil": "2026-12-31",
+        "availability": "https://schema.org/InStock",
+        "itemCondition": "https://schema.org/NewCondition"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "reviewCount": "312"
+      },
+      "weight": {
+        "@type": "QuantitativeValue",
+        "value": "400",
+        "unitCode": "GRM"
+      }
+    },
+    {
+      "@type": "Product",
+      "@id": "https://www.nutrikitchen.in/products.html#vanilla-health-mix",
+      "name": "Vanilla Health Mix",
+      "description": "A delicious twist on our classic health mix with natural vanilla flavor. Kids love the taste, moms love the nutrition.",
+      "image": "https://www.nutrikitchen.in/images/vanillachocolateHealth Mix.png",
+      "brand": {
+        "@type": "Brand",
+        "name": "Nutri Kitchen"
+      },
+      "offers": {
+        "@type": "Offer",
+        "url": "https://www.nutrikitchen.in/products.html",
+        "priceCurrency": "INR",
+        "price": "289",
+        "priceValidUntil": "2026-12-31",
+        "availability": "https://schema.org/InStock",
+        "itemCondition": "https://schema.org/NewCondition"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "reviewCount": "85"
+      },
+      "weight": {
+        "@type": "QuantitativeValue",
+        "value": "400",
+        "unitCode": "GRM"
+      }
+    },
+    {
+      "@type": "Product",
+      "@id": "https://www.nutrikitchen.in/products.html#chocolate-health-mix",
+      "name": "Chocolate Health Mix",
+      "description": "Rich chocolate flavor combined with the goodness of multi-grains. A perfect healthy treat for chocolate lovers.",
+      "image": "https://www.nutrikitchen.in/images/chocolateHealthMix.png",
+      "brand": {
+        "@type": "Brand",
+        "name": "Nutri Kitchen"
+      },
+      "offers": {
+        "@type": "Offer",
+        "url": "https://www.nutrikitchen.in/products.html",
+        "priceCurrency": "INR",
+        "price": "299",
+        "priceValidUntil": "2026-12-31",
+        "availability": "https://schema.org/InStock",
+        "itemCondition": "https://schema.org/NewCondition"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.8",
+        "reviewCount": "92"
+      },
+      "weight": {
+        "@type": "QuantitativeValue",
+        "value": "400",
+        "unitCode": "GRM"
+      }
+    },
+    {
+      "@type": "Product",
+      "@id": "https://www.nutrikitchen.in/products.html#millet-dosa-mix",
+      "name": "Millet Dosa Mix",
+      "description": "Authentic South Indian dosa mix made from nutritious millets. Crispy, healthy, and easy to prepare traditional breakfast.",
+      "image": "https://www.nutrikitchen.in/images/doshpouch.png",
+      "brand": {
+        "@type": "Brand",
+        "name": "Nutri Kitchen"
+      },
+      "offers": {
+        "@type": "Offer",
+        "url": "https://www.nutrikitchen.in/products.html",
+        "priceCurrency": "INR",
+        "price": "268",
+        "priceValidUntil": "2026-12-31",
+        "availability": "https://schema.org/InStock",
+        "itemCondition": "https://schema.org/NewCondition"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.7",
+        "reviewCount": "145"
+      },
+      "weight": {
+        "@type": "QuantitativeValue",
+        "value": "400",
+        "unitCode": "GRM"
+      }
+    },
+    {
+      "@type": "Product",
+      "@id": "https://www.nutrikitchen.in/products.html#millet-puttu-podi",
+      "name": "Millet Puttu Podi",
+      "description": "Traditional Kerala breakfast staple made with premium millets. Healthy, nutritious, and authentic puttu powder for your morning meal.",
+      "image": "https://www.nutrikitchen.in/images/puttuPouch.jpg",
+      "brand": {
+        "@type": "Brand",
+        "name": "Nutri Kitchen"
+      },
+      "offers": {
+        "@type": "Offer",
+        "url": "https://www.nutrikitchen.in/products.html",
+        "priceCurrency": "INR",
+        "price": "268",
+        "priceValidUntil": "2026-12-31",
+        "availability": "https://schema.org/InStock",
+        "itemCondition": "https://schema.org/NewCondition"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.6",
+        "reviewCount": "98"
+      },
+      "weight": {
+        "@type": "QuantitativeValue",
+        "value": "400",
+        "unitCode": "GRM"
+      }
+    }
+  ]
+}

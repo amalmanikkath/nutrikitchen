@@ -1,0 +1,46 @@
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "Nutri Kitchen",
+  "image": "https://www.nutrikitchen.in/images/nutrikitchenLogo.png",
+  "@id": "https://www.nutrikitchen.in",
+  "url": "https://www.nutrikitchen.in",
+  "telephone": "+91-7760268422",
+  "email": "connectnutrikitchen@gmail.com",
+  "priceRange": "₹₹",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Parakulam, P O, Kunissery",
+    "addressLocality": "Palakkad",
+    "addressRegion": "Kerala",
+    "postalCode": "678681",
+    "addressCountry": "IN"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": 10.7905,
+    "longitude": 76.2144
+  },
+  "openingHoursSpecification": {
+    "@type": "OpeningHoursSpecification",
+    "dayOfWeek": [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday"
+    ],
+    "opens": "09:00",
+    "closes": "18:00"
+  },
+  "sameAs": [
+    "https://www.instagram.com/nutrikitchen_in",
+    "https://www.amazon.in/l/27943762031?me=A3CVCYQ4VN2MYE"
+  ],
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.8",
+    "reviewCount": "1320"
+  }
+}

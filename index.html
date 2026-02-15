@@ -101,56 +101,117 @@
   <link rel="stylesheet" href="css/floating-cart.css">
   <link rel="stylesheet" href="css/dialog.css">
 
-  <!-- Structured Data - Organization Schema -->
+  <!-- Structured Data - Organization & Website Schema -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "Nutri Kitchen",
-    "description": "Premium healthy food products made from millet and premium grains",
+    "alternateName": "NutriKitchen",
     "url": "https://www.nutrikitchen.in",
-    "logo": "https://www.nutrikitchen.in/images/nutrikitchen.jpg",
+    "logo": "https://www.nutrikitchen.in/images/nutrikitchenLogo.png",
+    "description": "Premium millet products and natural health foods. 100% natural ingredients, traditional recipes, and modern nutrition.",
+    "email": "connectnutrikitchen@gmail.com",
+    "telephone": "+91-7760268422",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Parakulam, P O, Kunissery",
+      "addressLocality": "Palakkad",
+      "addressRegion": "Kerala",
+      "postalCode": "678681",
+      "addressCountry": "IN"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": "10.7905",
+      "longitude": "76.2144"
+    },
+    "sameAs": [
+      "https://www.instagram.com/nutrikitchen_in",
+      "https://www.amazon.in/l/27943762031?me=A3CVCYQ4VN2MYE"
+    ],
     "contactPoint": {
       "@type": "ContactPoint",
       "telephone": "+91-7760268422",
       "contactType": "Customer Service",
-      "areaServed": "IN",
+      "email": "connectnutrikitchen@gmail.com",
       "availableLanguage": ["English", "Hindi"]
     },
-    "sameAs": [
-      "https://www.instagram.com/nutrikitchen_in",
-      "https://twitter.com/nutrikitchen"
-    ],
-    "address": {
-      "@type": "PostalAddress",
-      "addressCountry": "IN",
-      "addressRegion": "Maharashtra",
-      "addressLocality": "Mumbai"
+    "founder": {
+      "@type": "Organization",
+      "name": "SMS AGRO",
+      "taxID": "32AFKFS2051L1ZX"
     }
   }
   </script>
 
-  <!-- Structured Data - Local Business -->
+  <!-- Structured Data - Website Schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Nutri Kitchen",
+    "url": "https://www.nutrikitchen.in",
+    "description": "Buy premium millet products online in India - Ragi health mix, Bajra protein mix, natural baby food, traditional superfoods. 100% natural with free shipping.",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Nutri Kitchen",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://www.nutrikitchen.in/images/nutrikitchenLogo.png"
+      }
+    },
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://www.nutrikitchen.in/products.html?search={search_term_string}"
+      },
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
+  <!-- Structured Data - Local Business Schema -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     "name": "Nutri Kitchen",
-    "image": "https://www.nutrikitchen.in/images/nutrikitchen.jpg",
+    "image": "https://www.nutrikitchen.in/images/nutrikitchenLogo.png",
+    "@id": "https://www.nutrikitchen.in",
+    "url": "https://www.nutrikitchen.in",
+    "telephone": "+91-7760268422",
+    "email": "connectnutrikitchen@gmail.com",
     "priceRange": "₹₹",
     "address": {
       "@type": "PostalAddress",
+      "streetAddress": "Parakulam, P O, Kunissery",
+      "addressLocality": "Palakkad",
+      "addressRegion": "Kerala",
+      "postalCode": "678681",
       "addressCountry": "IN"
     },
     "geo": {
       "@type": "GeoCoordinates",
-      "latitude": "19.0760",
-      "longitude": "72.8777"
+      "latitude": 10.7905,
+      "longitude": 76.2144
     },
-    "url": "https://www.nutrikitchen.in",
-    "telephone": "+91-7760268422",
-    "servesCuisine": "Healthy Food",
-    "acceptsReservations": "False"
+    "openingHoursSpecification": {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+      "opens": "09:00",
+      "closes": "18:00"
+    },
+    "sameAs": [
+      "https://www.instagram.com/nutrikitchen_in",
+      "https://www.amazon.in/l/27943762031?me=A3CVCYQ4VN2MYE"
+    ],
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "reviewCount": "1320"
+    }
   }
   </script>
 </head>
