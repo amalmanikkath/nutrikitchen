@@ -329,19 +329,19 @@ class ShoppingCart {
           <p class="cart-item-price">${SITE_CONFIG.currency}${item.product.price}</p>
         </div>
         <div class="cart-item-quantity">
-          <button class="quantity-btn minus" onclick="window.cart.updateQuantity(${item.product.id}, ${item.quantity - 1})">
+          <button class="quantity-btn minus" onclick="window.cart.updateQuantity('${item.product.id}', ${item.quantity - 1})">
             <svg viewBox="0 0 24 24" width="16" height="16"><path d="M19 13H5v-2h14v2z"/></svg>
           </button>
           <input type="number" value="${item.quantity}" min="1" max="99" 
-                 onchange="window.cart.updateQuantity(${item.product.id}, parseInt(this.value))">
-          <button class="quantity-btn plus" onclick="window.cart.updateQuantity(${item.product.id}, ${item.quantity + 1})">
+                 onchange="window.cart.updateQuantity('${item.product.id}', parseInt(this.value))">
+          <button class="quantity-btn plus" onclick="window.cart.updateQuantity('${item.product.id}', ${item.quantity + 1})">
             <svg viewBox="0 0 24 24" width="16" height="16"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
           </button>
         </div>
         <div class="cart-item-total">
           <p>${SITE_CONFIG.currency}${item.product.price * item.quantity}</p>
         </div>
-        <button class="cart-item-remove" onclick="window.cart.removeItem(${item.product.id})" aria-label="Remove item">
+        <button class="cart-item-remove" onclick="window.cart.removeItem('${item.product.id}')" aria-label="Remove item">
           <svg viewBox="0 0 24 24" width="20" height="20">
             <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
           </svg>

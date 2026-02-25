@@ -276,8 +276,8 @@ function renderProductsTable() {
         </span>
       </td>
       <td>
-        <button class="btn btn-sm" onclick="editProduct(${product.id})" style="margin-right: 8px;">Edit</button>
-        <button class="btn btn-sm" onclick="deleteProductConfirm(${product.id})" style="background: var(--error);">Delete</button>
+        <button class="btn btn-sm" onclick="editProduct('${product.id}')" style="margin-right: 8px;">Edit</button>
+        <button class="btn btn-sm" onclick="deleteProductConfirm('${product.id}')" style="background: var(--error);">Delete</button>
       </td>
     </tr>
   `).join('');

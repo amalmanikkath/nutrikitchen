@@ -430,7 +430,7 @@
                 <td>₹${Math.round(order.totalAmount)}</td>
                 <td><span class="status-badge status-${order.status.toLowerCase()}">${order.status}</span></td>
                 <td>${new Date(order.createdAt).toLocaleDateString()}</td>
-                <td><button class="view-btn" onclick="viewOrderDetails(${order.id})">View Order</button></td>
+                <td><button class="view-btn" onclick="viewOrderDetails('${order.id}')">View Order</button></td>
               </tr>
             `).join('');
           }
