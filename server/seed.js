@@ -42,6 +42,25 @@ const PRODUCTS = [
     amazonLink: 'https://www.amazon.in/Nutri-Kitchen-Multi-Grain-Natural-Ingredients-400gm/dp/B0G4W6TNW3/?_encoding=UTF8&m=A3CVCYQ4VN2MYE&psc=1&pd_rd_w=cpID4&content-id=amzn1.sym.da911696-31a7-479c-9922-299ce8aee4d0&pf_rd_p=da911696-31a7-479c-9922-299ce8aee4d0&pf_rd_r=5Q68NV1QPY89V8T4Y5Q5&pd_rd_wg=r6jh1&pd_rd_r=50d3350e-c7bd-4a66-86ab-9a3e0247c2d9&ref_=lscx_w_ssf_na'
   },
   {
+    name: 'Mooringa Avarampoo Soup',
+    category: 'Health Foods',
+    price: 249,
+    originalPrice: 299,
+    description: 'Mooringa Avarampoo Soup in a convenient 100gm pouch. A natural herbal soup blend to support immunity and wellbeing with traditional ingredients.',
+    features: [
+      '100gm Herbal Soup Pouch',
+      'Boosts Immunity',
+      'Rich in Antioxidants',
+      'Easy to Prepare'
+    ],
+    image: 'images/Mooringa.jpeg',
+    inStock: true,
+    weight: '100gm',
+    rating: 4.7,
+    reviews: 32,
+    amazonLink: '#'
+  },
+  {
     name: 'Jaggery Powder',
     category: 'Natural Sweeteners',
     price: 3,
