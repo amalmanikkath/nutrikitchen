@@ -57,7 +57,7 @@ function renderProducts(productsToShow) {
           <div class="shipping-free-badge">🚚 Free Shipping</div>
           ${product.isComingSoon ? 
     `<button class="btn btn-coming-soon btn-sm" onclick="showAlert('This product is coming soon! Stay tuned.', 'info'); return false;">Coming Soon</button>` :
-    `<button onclick="quickAddToCart(this, '${product.id}')" class="btn btn-primary btn-sm">Add to Cart</button>`
+    `<button onclick="quickAddToCart(this, ${product.id})" class="btn btn-primary btn-sm">Add to Cart</button>`
           }
         </div>
         

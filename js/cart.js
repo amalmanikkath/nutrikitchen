@@ -406,7 +406,8 @@ if (typeof window !== 'undefined') {
 
 // Add to cart function for buttons
 function addToCart(productId, quantity = 1) {
-  const product = PRODUCTS.find(p => p.id === productId);
+  const normalizedId = Number(productId);
+  const product = PRODUCTS.find(p => p.id === normalizedId);
   if (product) {
     cart.addItem(product, quantity);
   }
@@ -416,7 +417,8 @@ function addToCart(productId, quantity = 1) {
 function quickAddToCart(button, productId) {
   console.log(`quickAddToCart called for product ID: ${productId}`);
   try {
-    const product = PRODUCTS.find(p => p.id === productId);
+    const normalizedId = Number(productId);
+    const product = PRODUCTS.find(p => p.id === normalizedId);
     if (!product) {
       console.error(`Product with ID ${productId} not found in PRODUCTS array`);
       return;
