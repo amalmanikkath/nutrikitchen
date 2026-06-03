@@ -108,7 +108,7 @@ const PRODUCTS = [
   },
   {
     id: 11,
-    name: 'Nutri Coconut Oil',
+    name: 'Coconut Oil',
     category: 'Natural Oils',
     price: 520,
     originalPrice: 650,
