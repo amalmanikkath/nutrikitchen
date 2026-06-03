@@ -110,8 +110,8 @@ const PRODUCTS = [
     id: 11,
     name: 'Nutri Coconut Oil',
     category: 'Natural Oils',
-    price: 399,
-    originalPrice: 499,
+    price: 520,
+    originalPrice: 650,
     description: 'Premium cold-pressed coconut oil for cooking, hair care, and skin nourishment. Pure, unrefined, and naturally aromatic with all the benefits of fresh coconut. ',
     features: [
       'Cold-Pressed & Unrefined',
@@ -121,7 +121,7 @@ const PRODUCTS = [
     ],
     image: 'images/nutriCoconutOil.png',
     inStock: true,
-    weight: '500ml',
+    weight: '1 litre',
     rating: 4.9,
     reviews: 78,
     amazonLink: '#'
