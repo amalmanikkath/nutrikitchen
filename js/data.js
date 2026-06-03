@@ -107,6 +107,26 @@ const PRODUCTS = [
     amazonLink: 'https://www.amazon.in/Nutri-Kitchen-Protein-Natural-Multi-Millet/dp/B0G9RPQRDG/ref=lp_27943762031_1_3?pf_rd_p=9e034799-55e2-4ab2-b0d0-eb42f95b2d05&pf_rd_r=HRTRP2Y8QN5EM2DQ1SNV&sbo=RZvfv%2F%2FHxDF%2BO5021pAnSA%3D%3D'
   },
   {
+    id: 11,
+    name: 'Nutri Coconut Oil',
+    category: 'Natural Oils',
+    price: 399,
+    originalPrice: 499,
+    description: 'Premium cold-pressed coconut oil for cooking, hair care, and skin nourishment. Pure, unrefined, and naturally aromatic with all the benefits of fresh coconut. ',
+    features: [
+      'Cold-Pressed & Unrefined',
+      'Rich in Medium Chain Fatty Acids',
+      'Ideal for Cooking & Skin',
+      'Natural Aroma & Flavor'
+    ],
+    image: 'images/nutriCoconutOil.png',
+    inStock: true,
+    weight: '500ml',
+    rating: 4.9,
+    reviews: 78,
+    amazonLink: '#'
+  },
+  {
     id: 5,
     name: 'Puttu',
     category: 'Traditional Foods',
@@ -216,7 +236,8 @@ const CATEGORIES = [
   { id: 'health-foods', name: 'Health Foods', icon: '💪' },
   { id: 'protein-foods', name: 'Protein Foods', icon: '🥗' },
   { id: 'traditional-foods', name: 'Traditional Foods', icon: '🍚' },
-  { id: 'natural-sweeteners', name: 'Natural Sweeteners', icon: '🍯' }
+  { id: 'natural-sweeteners', name: 'Natural Sweeteners', icon: '🍯' },
+  { id: 'natural-oils', name: 'Natural Oils', icon: '🥥' }
 ];
 
 // Admin Configuration
