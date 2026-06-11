@@ -266,6 +266,26 @@ const PRODUCTS = [
     rating: 4.8,
     reviews: 45,
     amazonLink: '#'
+  },
+  {
+    id: 14,
+    name: 'Cold Pressed GroundNut Oil',
+    category: 'Natural Oils',
+    price: 495,
+    originalPrice: 620,
+    description: 'Pure cold-pressed groundnut oil with rich flavour and natural nutrients. Ideal for cooking, seasoning, and traditional wellness uses.',
+    features: [
+      'Cold-Pressed & Pure',
+      'Rich in Natural Nutrients',
+      'Great for Cooking & Frying',
+      'Light Aroma & Flavorful Taste'
+    ],
+    image: 'images/groundNutOil.jpg',
+    inStock: true,
+    weight: '1 litre',
+    rating: 4.7,
+    reviews: 35,
+    amazonLink: '#'
   }
 ];
 
