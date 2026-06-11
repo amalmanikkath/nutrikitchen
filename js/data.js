@@ -260,7 +260,7 @@ const PRODUCTS = [
       'Ideal for Cooking & Massage',
       'Traditional Nutritional Benefits'
     ],
-    image: 'images/sesamePetBottle',
+    image: 'images/sesamePetBottle.jpeg',
     inStock: true,
     weight: '1 litre',
     rating: 4.8,
