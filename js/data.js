@@ -108,7 +108,7 @@ const PRODUCTS = [
   },
   {
     id: 11,
-    name: 'Coconut Oil',
+    name: 'Cold Pressed Coconut oil',
     category: 'Natural Oils',
     price: 520,
     originalPrice: 650,
@@ -119,7 +119,7 @@ const PRODUCTS = [
       'Ideal for Cooking & Skin',
       'Natural Aroma & Flavor'
     ],
-    image: 'images/nutriCoconutOil.png',
+    image: 'images/coconutOil.png',
     inStock: true,
     weight: '1 litre',
     rating: 4.9,
@@ -245,6 +245,26 @@ const PRODUCTS = [
     weight: '100gm',
     rating: 4.7,
     reviews: 25,
+    amazonLink: '#'
+  },
+  {
+    id: 13,
+    name: 'Cold pressed Sesame Oil',
+    category: 'Natural Oils',
+    price: 580,
+    originalPrice: 720,
+    description: 'Premium cold-pressed sesame oil rich in minerals and antioxidants. Perfect for cooking, massage, and traditional wellness. Pure, unrefined, and naturally aromatic.',
+    features: [
+      'Cold-Pressed & Unrefined',
+      'Rich in Minerals & Antioxidants',
+      'Ideal for Cooking & Massage',
+      'Traditional Nutritional Benefits'
+    ],
+    image: 'images/sesamePetBottle.png',
+    inStock: true,
+    weight: '1 litre',
+    rating: 4.8,
+    reviews: 45,
     amazonLink: '#'
   }
 ];
