@@ -226,6 +226,26 @@ const PRODUCTS = [
     rating: 4.6,
     reviews: 98,
     amazonLink: 'https://www.amazon.in/l/27943762031?me=A3CVCYQ4VN2MYE&ref_=NSS_WELCOME_SHARESTOREFRONT'
+  },
+  {
+    id: 12,
+    name: 'Moringa Soup Mix',
+    category: 'Health Foods',
+    price: 240,
+    originalPrice: 299,
+    description: 'Nutrient-rich Moringa soup mix packed with natural antioxidants and minerals. Easy to prepare, delicious traditional soup blend for everyday wellness.',
+    features: [
+      'Rich in Antioxidants',
+      'Natural Moringa Goodness',
+      'Quick & Easy Preparation',
+      'No Additives or Preservatives'
+    ],
+    image: 'images/mooringa_Soup_Mix.png',
+    inStock: true,
+    weight: '100gm',
+    rating: 4.7,
+    reviews: 25,
+    amazonLink: '#'
   }
 ];
 
